@@ -31,7 +31,7 @@ source ./export.sh
 cd ..
 ```
 
-Compile and flash your board, setting the `IDF_TARGET` to whatever you're using 
+Compile and flash your AMY board, setting the `IDF_TARGET` to whatever you're using 
 ```bash
 cd amychip
 idf.py set-target esp32s3
@@ -48,7 +48,25 @@ i2c = I2C(0, freq=400000)
 amy.override_send= lambda x : i2c.writeto(0x58, bytes(x.encode('ascii')))
 ```
 
+You can get this on Tulip World:
 
+```python
+world.download('amychip.py')
+import amychip
+```
+
+
+## Protocol
+
+For now, over i2c, we just send AMY messages encoded as ASCII to `0x58`. Nothing gets returned. 
+
+TODO:
+ - `memorypcm` / sample loading
+ - stderr feedback over I2C
+ - `sequencer.c`, sending interrupts to the "main" i2c host
+ - SPI? UART? 
+
+ 
 
 
 
