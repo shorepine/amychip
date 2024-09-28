@@ -28,9 +28,11 @@
 static const char *TAG = "amy-chip";
 
 i2s_chan_handle_t tx_handle;
-#define CONFIG_I2S_BCLK 13 // 25
+#define CONFIG_I2S_BCLK 13 
 #define CONFIG_I2S_LRCLK 12
 #define CONFIG_I2S_DIN 11
+#define I2C_SLAVE_SCL_IO 5  
+#define I2C_SLAVE_SDA_IO 4 
 
 // This can be 32 bit, int32_t -- helpful for digital output to a i2s->USB teensy3 board
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
@@ -69,8 +71,7 @@ TaskHandle_t alles_fill_buffer_handle;
 #define _I2C_NUMBER(num) I2C_NUM_##num
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
 #define I2C_SLAVE_NUM I2C_NUMBER(0) /*!< I2C port number for slave dev */
-#define I2C_SLAVE_SCL_IO 5               /*!< gpio number for i2c slave clock */
-#define I2C_SLAVE_SDA_IO 4               /*!< gpio number for i2c slave data */
+
 #define I2C_SLAVE_TX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave tx buffer size */
 #define I2C_SLAVE_RX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave rx buffer size */
 #define ESP_SLAVE_ADDR 0x58             /*!< ESP32 slave address, you can set any 7bit value */
