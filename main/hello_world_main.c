@@ -28,13 +28,16 @@
 static const char *TAG = "amy-chip";
 
 i2s_chan_handle_t tx_handle;
+i2s_chan_handle_t rx_handle;
+
 #define CONFIG_I2S_BCLK 13 
 #define CONFIG_I2S_LRCLK 12
-#define CONFIG_I2S_DIN 11
+#define CONFIG_I2S_DIN 11 // data going to the codec, eg DAC data
 #define I2C_SLAVE_SCL_IO 5  
 #define I2C_SLAVE_SDA_IO 4 
 #define I2C_MASTER_SCL_IO 17
 #define I2C_MASTER_SDA_IO 18
+#define CONFIG_I2S_DOUT 16 // data coming from the codec, eg ADC  data
 
 // This can be 32 bit, int32_t -- helpful for digital output to a i2s->USB teensy3 board
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
@@ -184,10 +187,15 @@ void esp_render_task( void * pvParameters) {
     }
 }
 
+extern int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
+
 // Make AMY's FABT run forever , as a FreeRTOS task 
 void esp_fill_audio_buffer_task() {
+    size_t read = 0;
+    size_t written = 0;
     while(1) {
         AMY_PROFILE_START(AMY_ESP_FILL_BUFFER)
+        i2s_channel_read(rx_handle, amy_in_block, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS, &read, portMAX_DELAY);
 
         // Get ready to render
         amy_prepare_buffer();
@@ -202,11 +210,10 @@ void esp_fill_audio_buffer_task() {
         int16_t *block = amy_fill_buffer();
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
 
-        // We turn off writing to i2s on r10 when doing on chip debugging because of pins
-        size_t written = 0;
         i2s_channel_write(tx_handle, block, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS, &written, portMAX_DELAY);
-        if(written != AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS) {
-            fprintf(stderr,"i2s underrun: %d vs %d\n", written, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS);
+
+        if(written != AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS || read != AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS) {
+            fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS);
         }
 
     }
@@ -237,16 +244,16 @@ amy_err_t esp_amy_init() {
 // Setup I2S
 amy_err_t setup_i2s(void) {
     i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
-    i2s_new_channel(&chan_cfg, &tx_handle, NULL);
+    i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle);
     i2s_std_config_t std_cfg = {
         .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(AMY_SAMPLE_RATE),
-        .slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO),
+        .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO),
         .gpio_cfg = {
             .mclk = I2S_GPIO_UNUSED,
             .bclk = CONFIG_I2S_BCLK,
             .ws = CONFIG_I2S_LRCLK,
             .dout = CONFIG_I2S_DIN,
-            .din = I2S_GPIO_UNUSED,
+            .din = CONFIG_I2S_DOUT,
             .invert_flags = {
                 .mclk_inv = false,
                 .bclk_inv = false,
@@ -256,9 +263,11 @@ amy_err_t setup_i2s(void) {
     };
     /* Initialize the channel */
     i2s_channel_init_std_mode(tx_handle, &std_cfg);
+    i2s_channel_init_std_mode(rx_handle, &std_cfg);
 
     /* Before writing data, start the TX channel first */
     i2s_channel_enable(tx_handle);
+    i2s_channel_enable(rx_handle);
     return AMY_OK;
 }
 

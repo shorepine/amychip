@@ -168,16 +168,41 @@ const uint16_t _registerDefaults[56] = {
 
 
 // This sets up with OUT3/HP at line level volume
+// and with INPUT1 ADC coming in to i2s
+
 esp_err_t setup_wm8960_i2s() {
 
     enableVREF();
     enableVMID();
+
+    enableLMIC();
+    enableRMIC();
+
+    connectLMN1();
+    connectRMN1();
+
+    disableLINMUTE();
+    disableRINMUTE();
+    
+    setLINVOLDB(0);
+    setRINVOLDB(0);
+    
+    setLMICBOOST(WM8960_MIC_BOOST_GAIN_0DB);
+    setRMICBOOST(WM8960_MIC_BOOST_GAIN_0DB);
+
+    connectLMIC2B();
+    connectRMIC2B();
+
+    enableAINL();
+    enableAINR();
     
     disableLB2LO();
     disableRB2RO();
 
     enableLD2LO();
     enableRD2RO();
+    setLB2LOVOL(WM8960_OUTPUT_MIXER_GAIN_NEG_21DB); 
+    setRB2ROVOL(WM8960_OUTPUT_MIXER_GAIN_NEG_21DB); 
 
     enableLOMIX();
     enableROMIX();
@@ -193,8 +218,16 @@ esp_err_t setup_wm8960_i2s() {
     setPLLK(0x86, 0xC2, 0x26);
     setWL(WM8960_WL_16BIT);
     enablePeripheralMode();
+
+    enableAdcLeft();
+    enableAdcRight();
+
     enableDacLeft();
     enableDacRight();
+    disableDacMute();
+
+    disableLoopBack();
+
     disableDacMute();
 
     enableHeadphones();
