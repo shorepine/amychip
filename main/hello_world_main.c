@@ -13,8 +13,8 @@
 #include "esp_flash.h"
 #include "esp_system.h"
 #include "esp_task.h"
-#include "driver/i2c_slave.h"
-
+#include "driver/i2c_master.h"
+#include "wm8960.h"
 
 #include "amy.h"
 #include "examples.h"
@@ -33,6 +33,8 @@ i2s_chan_handle_t tx_handle;
 #define CONFIG_I2S_DIN 11
 #define I2C_SLAVE_SCL_IO 5  
 #define I2C_SLAVE_SDA_IO 4 
+#define I2C_MASTER_SCL_IO 17
+#define I2C_MASTER_SDA_IO 18
 
 // This can be 32 bit, int32_t -- helpful for digital output to a i2s->USB teensy3 board
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
@@ -70,11 +72,64 @@ TaskHandle_t alles_fill_buffer_handle;
 #define DATA_LENGTH 255
 #define _I2C_NUMBER(num) I2C_NUM_##num
 #define I2C_NUMBER(num) _I2C_NUMBER(num)
-#define I2C_SLAVE_NUM I2C_NUMBER(0) /*!< I2C port number for slave dev */
-
+#define I2C_SLAVE_NUM I2C_NUMBER(1) /*!< I2C port number for slave dev */
 #define I2C_SLAVE_TX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave tx buffer size */
 #define I2C_SLAVE_RX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave rx buffer size */
 #define ESP_SLAVE_ADDR 0x58             /*!< ESP32 slave address, you can set any 7bit value */
+#define I2C_MASTER_NUM I2C_NUMBER(0) /*!< I2C port number for master dev */
+#define I2C_MASTER_FREQ_HZ 400000
+#define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
+#define I2C_MASTER_RX_BUF_DISABLE 0  
+
+i2c_master_bus_handle_t tool_bus_handle;
+#define I2C_TOOL_TIMEOUT_VALUE_MS (50)
+esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
+
+    i2c_device_config_t i2c_dev_conf = {
+        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+        .device_address = 0x1A,
+    };
+    i2c_master_dev_handle_t dev_handle;
+    if (i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &dev_handle) != ESP_OK) {
+        return 1;
+    }
+    esp_err_t ret = i2c_master_transmit(dev_handle, data_wr, size_wr, I2C_TOOL_TIMEOUT_VALUE_MS);
+    if (ret == ESP_OK) {
+        //ESP_LOGI(TAG, "Write OK");
+    } else if (ret == ESP_ERR_TIMEOUT) {
+        ESP_LOGW(TAG, "Bus is busy");
+    } else {
+        ESP_LOGW(TAG, "Write Failed");
+    }
+    if (i2c_master_bus_rm_device(dev_handle) != ESP_OK) {
+        return 1;
+    }
+    return 0;
+
+}
+
+/**
+ * @brief i2c master initialization
+ */
+
+
+static esp_err_t i2c_master_init(void)
+{
+    i2c_master_bus_config_t i2c_bus_config = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .i2c_port = I2C_MASTER_NUM,
+        .scl_io_num = I2C_MASTER_SCL_IO,
+        .sda_io_num = I2C_MASTER_SDA_IO,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
+
+    if (i2c_new_master_bus(&i2c_bus_config, &tool_bus_handle) != ESP_OK) {
+        return 1;
+    }
+    return ESP_OK;
+}
+
 
 
 static void i2c_slave_request_cb(uint8_t num, uint8_t *cmd, uint8_t cmd_len, void * arg)
@@ -103,50 +158,12 @@ static void i2c_slave_receive_cb(uint8_t num, uint8_t * data, size_t len, bool s
     }
 }
 
-/**
- * @brief i2c slave initialization
- */
 static esp_err_t i2c_slave_init(void)
 {
     i2cSlaveAttachCallbacks(I2C_SLAVE_NUM, i2c_slave_request_cb, i2c_slave_receive_cb, NULL);
     return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA_IO, I2C_SLAVE_SCL_IO, ESP_SLAVE_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
 }
 
-
-/*
-static IRAM_ATTR bool i2c_slave_rx_done_callback(i2c_slave_dev_handle_t channel, const i2c_slave_rx_done_event_data_t *edata, void *user_data)
-{
-    BaseType_t high_task_wakeup = pdFALSE;
-    QueueHandle_t receive_queue = (QueueHandle_t)user_data;
-    xQueueSendFromISR(receive_queue, edata, &high_task_wakeup);
-    return high_task_wakeup == pdTRUE;
-}
-
-i2c_slave_dev_handle_t slave_handle;
-QueueHandle_t s_receive_queue;
-// on tulip, TS is 0x14, encoder is 0x41, dac is 0x59
-amy_err_t setup_i2c() {
-    i2c_slave_config_t i2c_slv_config = {
-        .addr_bit_len = I2C_ADDR_BIT_LEN_7,
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .i2c_port = I2C_NUM_0,
-        .send_buf_depth = 256,
-        .scl_io_num = 18,
-        .sda_io_num = 17,
-        .slave_addr = 0x58,
-    };
-
-    ESP_ERROR_CHECK(i2c_new_slave_device(&i2c_slv_config, &slave_handle));
-
-    s_receive_queue = xQueueCreate(1, sizeof(i2c_slave_rx_done_event_data_t));
-    i2c_slave_event_callbacks_t cbs = {
-        .on_recv_done = i2c_slave_rx_done_callback,
-    };
-    ESP_ERROR_CHECK(i2c_slave_register_event_callbacks(slave_handle, &cbs, s_receive_queue));
-    return AMY_OK;
-}
-
-*/
 
 
 // AMY synth states
@@ -249,7 +266,7 @@ void polyphony(uint32_t start, uint16_t patch) {
     struct event e = amy_default_event();
     e.time = start;
     e.load_patch = patch;
-    strcpy(e.voices, "0,1,2,3,4,5,6,7,8,9,10");
+    strcpy(e.voices, "0,1,2,3,4,5,6,7,8,9");
     amy_add_event(e);
     start += 250;
     uint8_t note = 40;
@@ -295,7 +312,9 @@ void app_main(void)
 
     printf("Minimum free heap size: %" PRIu32 " bytes\n", esp_get_minimum_free_heap_size());
 
-    check_init(&i2c_slave_init, "i2c");
+    check_init(&i2c_master_init, "i2c_master");
+    check_init(&i2c_slave_init, "i2c_slave");
+    check_init(&setup_wm8960_i2s, "wm8960");
     check_init(&setup_i2s, "i2s");
 
     esp_amy_init();
@@ -303,13 +322,9 @@ void app_main(void)
     //int64_t start_time = amy_sysclock();
     amy_reset_oscs();
 
-    //polyphony(start_time+500, 0);
+    //polyphony(500, 0);
 
-    /*
-    i2c_slave_rx_done_event_data_t rx_data;
-    uint8_t *data_rd = (uint8_t *) malloc(255);
-    data_rd[0] = 0;
-    */
+
     while(1) {
         /*
         ESP_ERROR_CHECK(i2c_slave_receive(slave_handle, data_rd, 255));
@@ -318,5 +333,6 @@ void app_main(void)
         */
         // Receive done.
         delay_ms(10);
+        //fprintf(stderr, "my time %ld. computed delta %ld\n", amy_sysclock(), computed_delta);
     }
 }

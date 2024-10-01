@@ -1,5 +1,6 @@
 idf_component_register(SRCS "hello_world_main.c"
                     esp32-hal-i2c-slave.c
+                    wm8960.c
                     ../../amy/src/log2_exp2.c
                     ../../amy/src/amy.c
                     ../../amy/src/custom.c
@@ -14,7 +15,7 @@ idf_component_register(SRCS "hello_world_main.c"
                     ../../amy/src/examples.c
                     ../../amy/src/delay.c
 
-                    PRIV_REQUIRES spi_flash esp_driver_i2s esp_driver_i2c esp_driver_gpio esp_ringbuf esp_timer
+                    PRIV_REQUIRES spi_flash esp_driver_i2s esp_driver_i2c esp_driver_gpio esp_ringbuf esp_timer driver
                     INCLUDE_DIRS "../../amy/src")
 
 
