@@ -1,9 +1,3 @@
-/*
- * SPDX-FileCopyrightText: 2010-2022 Espressif Systems (Shanghai) CO LTD
- *
- * SPDX-License-Identifier: CC0-1.0
- */
-
 #include <stdio.h>
 #include <inttypes.h>
 #include "sdkconfig.h"
@@ -38,8 +32,6 @@ i2s_chan_handle_t rx_handle;
 #define I2C_MASTER_SCL_IO 17
 #define I2C_MASTER_SDA_IO 18
 #define CONFIG_I2S_DOUT 16 // data coming from the codec, eg ADC  data
-
-// This can be 32 bit, int32_t -- helpful for digital output to a i2s->USB teensy3 board
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
 typedef int16_t i2s_sample_type;
 
@@ -80,7 +72,6 @@ TaskHandle_t alles_fill_buffer_handle;
 #define I2C_SLAVE_RX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave rx buffer size */
 #define ESP_SLAVE_ADDR 0x58             /*!< ESP32 slave address, you can set any 7bit value */
 #define I2C_MASTER_NUM I2C_NUMBER(0) /*!< I2C port number for master dev */
-#define I2C_MASTER_FREQ_HZ 400000
 #define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0  
 
@@ -89,7 +80,7 @@ i2c_master_bus_handle_t tool_bus_handle;
 esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
 
     i2c_device_config_t i2c_dev_conf = {
-        .scl_speed_hz = I2C_MASTER_FREQ_HZ,
+        .scl_speed_hz = I2C_CLK_FREQ,
         .device_address = 0x1A,
     };
     i2c_master_dev_handle_t dev_handle;
@@ -111,13 +102,8 @@ esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
 
 }
 
-/**
- * @brief i2c master initialization
- */
 
-
-static esp_err_t i2c_master_init(void)
-{
+static esp_err_t i2c_master_init(void) {
     i2c_master_bus_config_t i2c_bus_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = I2C_MASTER_NUM,
@@ -135,11 +121,7 @@ static esp_err_t i2c_master_init(void)
 
 
 
-static void i2c_slave_request_cb(uint8_t num, uint8_t *cmd, uint8_t cmd_len, void * arg)
-{
-    //ESP_LOGI(TAG, "rcv_len: %d", cmd_len);
-    // please not block or print in this callback function
-    // because the SCL Stretching will be released if time is too long
+static void i2c_slave_request_cb(uint8_t num, uint8_t *cmd, uint8_t cmd_len, void * arg) {
     if (cmd_len > 0) {
         // first write to master
         i2cSlaveWrite(I2C_SLAVE_NUM, cmd, cmd_len, 0);
@@ -151,18 +133,14 @@ static void i2c_slave_request_cb(uint8_t num, uint8_t *cmd, uint8_t cmd_len, voi
     }
 }
 
-static void i2c_slave_receive_cb(uint8_t num, uint8_t * data, size_t len, bool stop, void * arg)
-{
-    //ESP_LOGI(TAG, "rcv_len: %d", len);
+static void i2c_slave_receive_cb(uint8_t num, uint8_t * data, size_t len, bool stop, void * arg) {
     if (len > 0) {
         data[len]= 0;
         amy_play_message((char*)data);
-        //ESP_LOG_BUFFER_HEXDUMP(TAG, data, len, ESP_LOG_INFO);
     }
 }
 
-static esp_err_t i2c_slave_init(void)
-{
+static esp_err_t i2c_slave_init(void) {
     i2cSlaveAttachCallbacks(I2C_SLAVE_NUM, i2c_slave_request_cb, i2c_slave_receive_cb, NULL);
     return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA_IO, I2C_SLAVE_SCL_IO, ESP_SLAVE_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
 }
@@ -271,30 +249,9 @@ amy_err_t setup_i2s(void) {
     return AMY_OK;
 }
 
-void polyphony(uint32_t start, uint16_t patch) {
-    struct event e = amy_default_event();
-    e.time = start;
-    e.load_patch = patch;
-    strcpy(e.voices, "0,1,2,3,4,5,6,7,8,9");
-    amy_add_event(e);
-    start += 250;
-    uint8_t note = 40;
-    for(uint8_t i=0;i<11;i++) {
-        e = amy_default_event();
-        e.time = start;
-        e.velocity=0.5;
-        sprintf(e.voices, "%d", i);
-        e.midi_note = note;
-        amy_add_event(e);
-        start += 1000;
-        note += 2;
-    }
-}   
-
-
 void app_main(void)
 {
-    printf("Hello world!\n");
+    printf("Welcome to the AMY chip implementation!\n");
 
     /* Print chip information */
     esp_chip_info_t chip_info;
@@ -325,23 +282,11 @@ void app_main(void)
     check_init(&i2c_slave_init, "i2c_slave");
     check_init(&setup_wm8960_i2s, "wm8960");
     check_init(&setup_i2s, "i2s");
-
     esp_amy_init();
-
-    //int64_t start_time = amy_sysclock();
     amy_reset_oscs();
-
-    //polyphony(500, 0);
 
 
     while(1) {
-        /*
-        ESP_ERROR_CHECK(i2c_slave_receive(slave_handle, data_rd, 255));
-        xQueueReceive(s_receive_queue, &rx_data, pdMS_TO_TICKS(10000));
-        fprintf(stderr, "i2c message is %s\n", data_rd);
-        */
-        // Receive done.
         delay_ms(10);
-        //fprintf(stderr, "my time %ld. computed delta %ld\n", amy_sysclock(), computed_delta);
     }
 }

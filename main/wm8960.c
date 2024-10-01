@@ -1,5 +1,5 @@
 // wm89602.c
-// ported from sparkfun (newer?) version
+// ported from sparkfun to esp-idf by bwhitman
 
 /******************************************************************************
   SparkFun WM8960 Arduino Library
@@ -169,7 +169,6 @@ const uint16_t _registerDefaults[56] = {
 
 // This sets up with OUT3/HP at line level volume
 // and with INPUT1 ADC coming in to i2s
-
 esp_err_t setup_wm8960_i2s() {
 
     enableVREF();
