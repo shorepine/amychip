@@ -1,4 +1,4 @@
-idf_component_register(SRCS "hello_world_main.c"
+idf_component_register(SRCS "amychip.c"
                     esp32-hal-i2c-slave.c
                     wm8960.c
                     ../../amy/src/log2_exp2.c
