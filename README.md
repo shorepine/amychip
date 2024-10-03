@@ -8,6 +8,7 @@ We have
 And soon want to have
  - `rp2350`
  - `esp32p4`
+ - `daisy`
 
 
 ## How to
