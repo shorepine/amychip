@@ -24,14 +24,15 @@ static const char *TAG = "amy-chip";
 i2s_chan_handle_t tx_handle;
 i2s_chan_handle_t rx_handle;
 
-#define CONFIG_I2S_BCLK 13 
-#define CONFIG_I2S_LRCLK 12
-#define CONFIG_I2S_DIN 11 // data going to the codec, eg DAC data
-#define I2C_SLAVE_SCL_IO 5  
-#define I2C_SLAVE_SDA_IO 4 
-#define I2C_MASTER_SCL_IO 17
-#define I2C_MASTER_SDA_IO 18
-#define CONFIG_I2S_DOUT 16 // data coming from the codec, eg ADC  data
+
+#define I2S_BCLK 13 
+#define I2S_LRCLK 12
+#define I2S_DIN 11 // data going to the codec, eg DAC data
+#define I2C_SLAVE_SCL 5  
+#define I2C_SLAVE_SDA 4 
+#define I2C_MASTER_SCL 17
+#define I2C_MASTER_SDA 18
+#define I2S_DOUT 16 // data coming from the codec, eg ADC  data
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
 typedef int16_t i2s_sample_type;
 
@@ -107,8 +108,8 @@ static esp_err_t i2c_master_init(void) {
     i2c_master_bus_config_t i2c_bus_config = {
         .clk_source = I2C_CLK_SRC_DEFAULT,
         .i2c_port = I2C_MASTER_NUM,
-        .scl_io_num = I2C_MASTER_SCL_IO,
-        .sda_io_num = I2C_MASTER_SDA_IO,
+        .scl_io_num = I2C_MASTER_SCL,
+        .sda_io_num = I2C_MASTER_SDA,
         .glitch_ignore_cnt = 7,
         .flags.enable_internal_pullup = true,
     };
@@ -142,7 +143,7 @@ static void i2c_slave_receive_cb(uint8_t num, uint8_t * data, size_t len, bool s
 
 static esp_err_t i2c_slave_init(void) {
     i2cSlaveAttachCallbacks(I2C_SLAVE_NUM, i2c_slave_request_cb, i2c_slave_receive_cb, NULL);
-    return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA_IO, I2C_SLAVE_SCL_IO, ESP_SLAVE_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
+    return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA, I2C_SLAVE_SCL, ESP_SLAVE_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
 }
 
 
@@ -165,7 +166,7 @@ void esp_render_task( void * pvParameters) {
     }
 }
 
-extern int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
+int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
 
 // Make AMY's FABT run forever , as a FreeRTOS task 
 void esp_fill_audio_buffer_task() {
@@ -228,10 +229,10 @@ amy_err_t setup_i2s(void) {
         .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO),
         .gpio_cfg = {
             .mclk = I2S_GPIO_UNUSED,
-            .bclk = CONFIG_I2S_BCLK,
-            .ws = CONFIG_I2S_LRCLK,
-            .dout = CONFIG_I2S_DIN,
-            .din = CONFIG_I2S_DOUT,
+            .bclk = I2S_BCLK,
+            .ws = I2S_LRCLK,
+            .dout = I2S_DIN,
+            .din = I2S_DOUT,
             .invert_flags = {
                 .mclk_inv = false,
                 .bclk_inv = false,
