@@ -30,9 +30,3 @@ set_source_files_properties(../../../amy/src/amy.c
     PROPERTIES COMPILE_FLAGS
     -Wno-strict-aliasing
 )
-
-
-set_source_files_properties(../../../amy/src/transfer.c
-    PROPERTIES COMPILE_FLAGS
-    -Wno-char-subscripts
-)

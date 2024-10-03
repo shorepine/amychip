@@ -13,10 +13,11 @@ And soon want to have
 
 ## How to
 
-Clone AMY into a folder next to this one
+Clone AMY into a folder next to this one. For now, use the `amychip-combined` branch of AMY
 
 ```bash
 git clone https://github.com/shorepine/amy
+cd amy; git checkout amychip-combined; cd ..
 git clone https://github.com/shorepine/amychip
 ```
 

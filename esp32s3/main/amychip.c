@@ -166,7 +166,7 @@ void esp_render_task( void * pvParameters) {
     }
 }
 
-int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
+extern int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
 
 // Make AMY's FABT run forever , as a FreeRTOS task 
 void esp_fill_audio_buffer_task() {
@@ -174,7 +174,7 @@ void esp_fill_audio_buffer_task() {
     size_t written = 0;
     while(1) {
         AMY_PROFILE_START(AMY_ESP_FILL_BUFFER)
-        i2s_channel_read(rx_handle, amy_in_block, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS, &read, portMAX_DELAY);
+        i2s_channel_read(rx_handle, amy_in_block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &read, portMAX_DELAY);
 
         // Get ready to render
         amy_prepare_buffer();
@@ -189,10 +189,10 @@ void esp_fill_audio_buffer_task() {
         int16_t *block = amy_fill_buffer();
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
 
-        i2s_channel_write(tx_handle, block, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS, &written, portMAX_DELAY);
+        i2s_channel_write(tx_handle, block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &written, portMAX_DELAY);
 
-        if(written != AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS || read != AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS) {
-            fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * BYTES_PER_SAMPLE * AMY_NCHANS);
+        if(written != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS || read != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS) {
+            fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS);
         }
 
     }
