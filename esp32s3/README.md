@@ -21,5 +21,6 @@ Compile and flash your AMY board
 ```bash
 cd amychip
 idf.py set-target esp32s3
+cd esp32s3
 idf.py flash
 ```
