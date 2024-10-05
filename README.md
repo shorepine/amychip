@@ -47,7 +47,7 @@ WM8960 GND -> Audio in GND
 WM8960 LINPUT1 -> Audio in L
 WM8960 RINPUT1 -> Audio in R
 WM8960 HPL -> Audio out L
-WM8960 OUT3 -> Audio out GND
+WM8960 OUT3 -> Audio out GND  *** NOTE: Audio-out "ground" is actually a special "mid-voltage" on OUT3
 WM8960 HPR -> Audio out R
 WM8960 BLCK -> I2S_BCLK
 WM8960 DACLRC -> I2S_LRCLK (shared)
