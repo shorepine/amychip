@@ -6,7 +6,7 @@ An ESP-IDF implementation of running [AMY](https://github.com/shorepine/AMY) on 
 
 ## ESP32-S3 setup
 
-Install and export the [ESP-IDF](https://github.com/espressif/esp-idf). Use the `master` branch.
+Install and export the [ESP-IDF](https://github.com/espressif/esp-idf). Use the `master` branch.  You will likely need version 5.4; version 5.2 does not work, so install this new version even if you have an existing, older one installed.
 
 ```bash
 git clone https://github.com/espressif/esp-idf
