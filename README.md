@@ -13,11 +13,10 @@ And soon want to have
 
 ## How to
 
-Clone AMY into a folder next to this one. For now, use the `amychip-combined` branch of AMY
+Clone AMY into a folder next to this one. For now, use the `main` branch of AMY
 
 ```bash
 git clone https://github.com/shorepine/amy
-cd amy; git checkout amychip-combined; cd ..
 git clone https://github.com/shorepine/amychip
 ```
 
@@ -43,11 +42,11 @@ Tulip or etc I2C/Mabee/Grove SDA -> I2C_SLAVE_SDA
 Tulip or etc I2C/Mabee/Grove GND -> MCU GND
 Tulip or etc I2C/Mabee/Grove 3.3V -> MCU 3V3
 USB 5V -> MCU (we need 5V to power this codec)
-WM8960 GND -> Audio in GND
+WM8960 GND -> Audio in sleeve/GND
 WM8960 LINPUT1 -> Audio in L
 WM8960 RINPUT1 -> Audio in R
 WM8960 HPL -> Audio out L
-WM8960 OUT3 -> Audio out GND  *** NOTE: Audio-out "ground" is actually a special "mid-voltage" on OUT3
+WM8960 OUT3 -> Audio out sleeve  *** NOTE: Audio-out "ground" is actually a special "mid-voltage" on OUT3
 WM8960 HPR -> Audio out R
 WM8960 BLCK -> I2S_BCLK
 WM8960 DACLRC -> I2S_LRCLK (shared)
@@ -71,6 +70,7 @@ import amy
 i2c = I2C(0, freq=400000)
 
 amy.override_send= lambda x : i2c.writeto(0x58, bytes(x.encode('ascii')))
+amy.send(reset=amy.RESET_TIMEBASE, time=tulip.ticks_ms()) # Restart the clock
 ```
 
 You can get this on Tulip World:
