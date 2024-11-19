@@ -15,6 +15,7 @@ idf_component_register(SRCS "amychip.c"
                     ../../../amy/src/examples.c
                     ../../../amy/src/delay.c
                     ../../../amy/src/transfer.c
+                    ../../../amy/src/sequencer.c
 
                     PRIV_REQUIRES spi_flash esp_driver_i2s esp_driver_i2c esp_driver_gpio esp_ringbuf esp_timer driver
                     INCLUDE_DIRS "../../../amy/src")

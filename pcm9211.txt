@@ -1,0 +1,44 @@
+# PCM9211 Wiring Hookup
+
+The PCM9211 is used for ADC, for SPDIF (Coax) input, and ultimately for SPDIF
+output.
+This file gives the connections for attaching the "dpwe" PCM9211 carrier board
+to an ESP32-S3 DevKitC1 board [PinNum].
+
+PCM9211
+-------
+1  ERR      to 220 ohm resistor, then a red LED to ground. On = No SPDIF lock.
+17 DOUT     I2S DOUT out from PCM9211, to I2S DIN on DAC amd/or ESP32 [16?]
+18 LRCK     I2S LRCK out from PCM9211, to I2S LRCK in on DAC and/or ESP32 [12]
+19 BCK      I2S BCK out from PCM9211, to I2S BCK in on DAC and/or ESP32 [13]
+21 DGND     Gnd - Digital Ground [G]
+22 DVDD     +3.3V Digital VDD
+23 ADR0     Gnd (bit 0 of I2C address 0x40)
+24 SDA      I2C DATA, to I2C Main DA [18]
+25 SCL      I2C CLK, to I2C Main CL [17]
+26 ADR1     Gnd (bit 1 of I2C address 0x40)
+27 MODE     Gnd (selects I2C)
+34 NRST     +3.3V (maybe via a pull-up of 4k7 or something)
+35 RXIN1    SPDIF input 1.  Alternative to RXIN0
+36 VDDRX    +3.3V Receiver VDD
+37 RXIN0    SPDIF input 0.  Via 0.1 uF to Coax tip.
+38 GNDRX    Gnd - Receiver Ground
+39 XTI      XTAL in - connected on board - do not connect
+40 XTO      XTAL out - connected on board - do not connect
+41 AGND     Gnd - Analog Ground
+42 VCC      +3.3V Main VCC
+43 FILT     PLL smoothing - connected on board - do not connect
+44 VCOM     Floating analog common - connected on board - do not connect
+45 AGNDAD   Gnd - ADC Ground
+46 VCCAD    +5v - ADC VCC.  Maybe +3.3V would work too.
+47 VINL     ADC Left channel input.  Via 10k and 10 uF to analog input
+48 VINR     ADC Right channel input.  Via 10k and 10 uF to analog input
+              Note: Analog input goes to -ve side of 10 uF, +ve side of 10 uF
+              goes to the resistor and then pins 47/48.  I didn't use resistors.
+
+MPIO_C (pins 7-10) (or possibly MPIO_A, pins 3-6) will be I2S input from the
+ESP32.  They will be converted to SPDIF and emitted on MPO0 (15) as CMOS SPDIF.
+This will need some kind of buffer amp to drive the coax SPDIF output.
+https://forum.pjrc.com/index.php?threads/looking-for-circuit-to-use-s-pdif-coax-output.75010/
+says you can use a 0.1 uF dc blocking capacitor (like on the SPDIF input) and a
+two-resistor voltage divider for simple SPDIF coax output.
