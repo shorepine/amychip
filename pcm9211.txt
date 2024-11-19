@@ -36,6 +36,13 @@ PCM9211
               Note: Analog input goes to -ve side of 10 uF, +ve side of 10 uF
               goes to the resistor and then pins 47/48.  I didn't use resistors.
 
+The dpwe PCM9211 devboard has an on-board 24.5760 MHz xtal, loaded by two 20pf
+capacitors to ground, across XTI and XTO, and between FILT and ground a 4.7nF
+in parallel with a series connection of 680 ohms and 68 nF.  This matches Figure
+7-1 of the PCM9211 datasheet
+https://www.ti.com/lit/ds/symlink/pcm9211.pdf
+(except they use 10pf loading).
+
 MPIO_C (pins 7-10) (or possibly MPIO_A, pins 3-6) will be I2S input from the
 ESP32.  They will be converted to SPDIF and emitted on MPO0 (15) as CMOS SPDIF.
 This will need some kind of buffer amp to drive the coax SPDIF output.
