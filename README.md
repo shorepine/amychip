@@ -13,14 +13,6 @@ And soon want to have
 
 ## How to
 
-Clone AMY into a folder next to this one. For now, use the `main` branch of AMY
-
-```bash
-git clone https://github.com/shorepine/amy
-git clone https://github.com/shorepine/amychip
-```
-
-
 Set your I2S and I2C pins at the top of the `amychip.c` in your chip's folder:
 
 ```c

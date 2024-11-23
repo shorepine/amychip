@@ -8,7 +8,6 @@
 #include "esp_system.h"
 #include "esp_task.h"
 #include "driver/i2c_master.h"
-#include "wm8960.h"
 
 #include "amy.h"
 #include "examples.h"
@@ -78,11 +77,11 @@ TaskHandle_t alles_fill_buffer_handle;
 
 i2c_master_bus_handle_t tool_bus_handle;
 #define I2C_TOOL_TIMEOUT_VALUE_MS (50)
-esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
+esp_err_t i2c_master_write_pcm9211(uint8_t *data_wr, size_t size_wr) {
 
     i2c_device_config_t i2c_dev_conf = {
         .scl_speed_hz = I2C_CLK_FREQ,
-        .device_address = 0x1A,
+        .device_address = 0x40,
     };
     i2c_master_dev_handle_t dev_handle;
     if (i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &dev_handle) != ESP_OK) {
@@ -90,7 +89,7 @@ esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
     }
     esp_err_t ret = i2c_master_transmit(dev_handle, data_wr, size_wr, I2C_TOOL_TIMEOUT_VALUE_MS);
     if (ret == ESP_OK) {
-        //ESP_LOGI(TAG, "Write OK");
+
     } else if (ret == ESP_ERR_TIMEOUT) {
         ESP_LOGW(TAG, "Bus is busy");
     } else {
@@ -100,9 +99,131 @@ esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
         return 1;
     }
     return 0;
-
 }
 
+void writeRegister(uint8_t reg, uint16_t value) {
+  uint8_t data[2];
+  data[0] = (reg ); 
+  data[1] = (value); 
+  if(i2c_master_write_pcm9211(data,2)) fprintf(stderr, "bad\n");
+}
+
+
+esp_err_t setup_pcm9211(void) {
+    // do the register dance
+
+    // #**************************************
+    // #this script is for SPDIF-->RXIN0-->DIR-->MainOutput, Record sound from SPDIF to PC through TAS1020
+
+    // #So
+    // #1, Chose RXIN0 to DIR
+    // #2, Active DIR
+    // #3, chose DIR output as Mainoutput's source.
+
+    // #Also HW modification
+    // #1, Flying to High Level(3.3V) to make sure U7's output is Hi-Z
+    // #or 2, TAS1020 output logic high on P1.2 I2S enable signal. 
+    // #**************************************
+
+
+    // #System RST Control
+    // #w 80 40 00
+    // w 80 40 33
+    writeRegister(0x40, 0x33);  // Power down ADC, power down DIR, power down DIT, power down OSC
+    // w 80 40 C0
+    writeRegister(0x40, 0xC0);  // Normal operation for all
+
+    // #XTI Source, Clock (SCK/BCK/LRCK) Frequency Setting
+    // # XTI 24.5760 for SCLK 12.288 and BCK 3.072, LRCK 48k = XTI/512
+    // w 80 31 1A
+    writeRegister(0x31, 0x1a);
+    // w 80 33 22
+    writeRegister(0x33, 0x22);
+    // w 80 20 00
+    writeRegister(0x20, 0x00);
+    // w 80 24 00
+    writeRegister(0x24, 0x00);
+    // #ADC clock source is chosen by REG42
+    // w 80 26 81
+    writeRegister(0x26, 0x81);
+
+    // #XTI Source, Secondary Bit/LR Clock (SBCK/SLRCK) Frequency Setting
+    // w 80 33 22
+    writeRegister(0x33, 0x22);
+
+    // #*********************************************************
+    // #-------------------------------Start DIR settings---------------------------------------
+    // #REG. 21h, DIR Receivable Incoming Biphase's Sampling Frequency Range Setting
+    // w 80 21 00
+    writeRegister(0x21, 0x10);   // 0x10 = normal, 28-108 kHz
+
+    // #REG. 22h, DIR CLKSTP and VOUT delay
+    // w 80 22 01
+    writeRegister(0x22, 0x01);
+
+    // #REG. 23h, DIR OCS start up wait time and Process for Parity Error Detection and ERROR Release Wait Time Setting
+    // w 80 23 04
+    writeRegister(0x23, 0x04);
+
+    // # REG 27h DIR Acceptable fs Range Setting & Mask
+    // w 80 27 00
+    //writeRegister(0x27, 0xd7);  // 0xd7: Limit to 32, 44, 48 +/- 2%
+    writeRegister(0x27, 0x00);  // 0xd7: Limit to 32, 44, 48 +/- 2%
+
+    // # REG 2Fh, DIR Output Data Format, 24bit I2S mode
+    // w 80 2F 04
+    writeRegister(0x2f, 0x04);
+
+    // # REG. 30h, DIR Recovered System Clock (SCK) Ratio Setting
+    // w 80 30 02
+    writeRegister(0x30, 0x02);
+
+    // #REG. 32h, DIR Source, Secondary Bit/LR Clock (SBCK/SLRCK) Frequency Setting
+    // w 80 32 22
+    writeRegister(0x32, 0x22);
+
+    // #REG 34h DIR Input Biphase Signal Source Select and RXIN01 Coaxial Amplifier
+    // #--PWR down amplifier, Select RXIN2
+    // #w 80 34 C2
+    // #--PWR up amplifier, select RXIN0
+    // w 80 34 00
+    //writeRegister(0x34, 0x00);
+    // #--PWR up amplifier, select RXIN1
+    // #w 80 34 01
+    writeRegister(0x34, 0x01);
+
+    // #REG. 37h, Port Sampling Frequency Calculator Measurement Target Setting, Cal and DIR Fs
+    // w 80 37 00
+    writeRegister(0x37, 0x00);
+    // #REG 38h rd DIR Fs
+    // r 80 38 01
+    writeRegister(0x38, 0x01);
+    // #***********************************************************
+    // #------------------------------------ End DIR settings------------------------------------------
+
+    // #***********************************************************
+    // #---------------------------------Start  MainOutput Settings--------------------------------------
+    // #MainOutput
+    // #REG. 6Ah, Main Output & AUXOUT Port Control
+    // w 80 6A 00
+    writeRegister(0x6a, 0x00);
+
+    // #REG. 6Bh, Main Output Port (SCKO/BCK/LRCK/DOUT) Source Setting
+    // w 80 6B 11
+    //writeRegister(0x6b, 0x11);  // 0x11 = locked to DIR (0x00 for ADC/DIR auto)
+    // dan had
+    //writeRegister(0x6b, 0x00);  // 0x11 = locked to DIR (0x00 for ADC/DIR auto)
+    writeRegister(0x6b, 0x14);
+    //writeRegister(0x61, 0x14);
+    //writeRegister(0x34, 0xCF);
+
+    // #REG. 6Dh, MPIO_B & Main Output Port Hi-Z Control
+    // w 80 6D 00
+    writeRegister(0x6d, 0x00);
+    // #***********************************************************
+    // #------------------------------------ End MainOutput settings------------------------------------------
+    return ESP_OK;
+}
 
 static esp_err_t i2c_master_init(void) {
     i2c_master_bus_config_t i2c_bus_config = {
@@ -222,7 +343,7 @@ amy_err_t esp_amy_init() {
 
 // Setup I2S
 amy_err_t setup_i2s(void) {
-    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
+    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_SLAVE);
     i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle);
     i2s_std_config_t std_cfg = {
         .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(AMY_SAMPLE_RATE),
@@ -281,11 +402,17 @@ void app_main(void)
 
     check_init(&i2c_master_init, "i2c_master");
     check_init(&i2c_slave_init, "i2c_slave");
-    check_init(&setup_wm8960_i2s, "wm8960");
+    check_init(&setup_pcm9211, "pcm9211");
     check_init(&setup_i2s, "i2s");
     esp_amy_init();
     amy_reset_oscs();
 
+    struct event e = amy_default_event();
+    e.time = amy_sysclock();
+    e.freq_coefs[0] = 440;
+    e.wave = SINE;
+    e.velocity = 1;
+    amy_add_event(e);
 
     while(1) {
         delay_ms(10);

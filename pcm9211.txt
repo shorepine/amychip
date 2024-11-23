@@ -19,9 +19,9 @@ PCM9211
 26 ADR1     Gnd (bit 1 of I2C address 0x40)
 27 MODE     Gnd (selects I2C)
 34 NRST     +3.3V (maybe via a pull-up of 4k7 or something)
-35 RXIN1    SPDIF input 1.  Alternative to RXIN0
+35 RXIN1    SPDIF input 1.  Via 0.1 uF to Coax tip. Use this one
 36 VDDRX    +3.3V Receiver VDD
-37 RXIN0    SPDIF input 0.  Via 0.1 uF to Coax tip.
+37 RXIN0    SPDIF input 0.  Via 0.1 uF to Coax tip. Don't use this one 
 38 GNDRX    Gnd - Receiver Ground
 39 XTI      XTAL in - connected on board - do not connect
 40 XTO      XTAL out - connected on board - do not connect
@@ -49,3 +49,12 @@ This will need some kind of buffer amp to drive the coax SPDIF output.
 https://forum.pjrc.com/index.php?threads/looking-for-circuit-to-use-s-pdif-coax-output.75010/
 says you can use a 0.1 uF dc blocking capacitor (like on the SPDIF input) and a
 two-resistor voltage divider for simple SPDIF coax output.
+
+auxin1 
+X 7 MPIO_C0 - SCK to esp 
+8 MPIO_C1 - BCK to esp    13
+9 MPIO_C2 - LRCLK to esp  12
+10 MPIO_C3 - DIN to esp   11
+
+auxout
+14 MPIO_b3 - dout to esp 16

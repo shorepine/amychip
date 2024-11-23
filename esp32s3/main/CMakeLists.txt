@@ -1,6 +1,5 @@
 idf_component_register(SRCS "amychip.c"
                     esp32-hal-i2c-slave.c
-                    wm8960.c
                     ../../amy/src/log2_exp2.c
                     ../../amy/src/amy.c
                     ../../amy/src/custom.c
@@ -25,6 +24,7 @@ idf_component_register(SRCS "amychip.c"
 target_compile_options(${COMPONENT_TARGET} PUBLIC 
     -Wno-uninitialized
     -DESP_PLATFORM
+    -DAMYCHIP
 )
 
 set_source_files_properties(../../amy/src/amy.c
