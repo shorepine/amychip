@@ -25,6 +25,7 @@ i2s_chan_handle_t tx_handle;
 i2s_chan_handle_t rx_handle;
 
 
+#define I2S_MCLK 10
 #define I2S_BCLK 13 
 #define I2S_LRCLK 12
 #define I2S_DIN 11 // data going to the codec, eg DAC data
@@ -33,8 +34,10 @@ i2s_chan_handle_t rx_handle;
 #define I2C_MASTER_SCL 17
 #define I2C_MASTER_SDA 18
 #define I2S_DOUT 16 // data coming from the codec, eg ADC  data
-#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
-typedef int16_t i2s_sample_type;
+//#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
+//typedef int16_t i2s_sample_type;
+#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_32BIT
+typedef int32_t i2s_sample_type;
 
 
 // mutex that locks writes to the delta queue
@@ -78,11 +81,11 @@ TaskHandle_t alles_fill_buffer_handle;
 
 i2c_master_bus_handle_t tool_bus_handle;
 #define I2C_TOOL_TIMEOUT_VALUE_MS (50)
-esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
+esp_err_t i2c_master_write(uint8_t device_addr, uint8_t *data_wr, size_t size_wr) {
 
     i2c_device_config_t i2c_dev_conf = {
         .scl_speed_hz = I2C_CLK_FREQ,
-        .device_address = 0x1A,
+        .device_address = device_addr, 
     };
     i2c_master_dev_handle_t dev_handle;
     if (i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &dev_handle) != ESP_OK) {
@@ -101,6 +104,48 @@ esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
     }
     return 0;
 
+}
+
+esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
+    return i2c_master_write(0x1A, data_wr, size_wr);
+}
+
+esp_err_t i2c_master_write_pcm9211(uint8_t *data_wr, size_t size_wr) {
+    return i2c_master_write(0x40, data_wr, size_wr);
+}
+
+void pcm9211_writeRegister(uint8_t reg, uint16_t value) {
+  uint8_t data[2];
+  data[0] = reg; 
+  data[1] = value; 
+  if (i2c_master_write_pcm9211(data, 2))
+      fprintf(stderr, "bad write to pcm9211\n");
+}
+
+esp_err_t setup_pcm9211(void) {
+    // #System RST Control
+    // #w 80 40 00
+    // w 80 40 33
+    pcm9211_writeRegister(0x40, 0x33);  // Power down ADC, power down DIR, power down DIT, power down OSC
+    // w 80 40 C0
+    pcm9211_writeRegister(0x40, 0xc0);  // Normal operation for all
+
+    // Initialize DIR - both biphase amps on, input from RXIN0
+    pcm9211_writeRegister(0x34, 0x00);
+    
+    // Main Out is DIR/ADC if no DIR sync (these match power-on default, repeated for clarity).
+    pcm9211_writeRegister(0x26, 0x01);  // AUTO selects based on PLL lock error.
+    pcm9211_writeRegister(0x6B, 0x00);  // Main output pins are DIR/ADC AUTO
+
+    // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
+    //pcm9211_writeRegister(0x60, 0x00);  // 0x00 = DIR/ADC auto
+    pcm9211_writeRegister(0x60, 0x44);  // 0x44 = AUXIN1
+    pcm9211_writeRegister(0x78, 0x3d);  // MPO0 = 0b1101 = TXOUT, MPO1 = 0b0011 = VOUT
+
+    // Initialize MPIO_C as I2S input to AUXIN1
+    pcm9211_writeRegister(0x6F, 0x40);  // MPIO_A = CLKST etc / MPIO_B = AUXIN2 / MPIO_C = AUXIN1
+
+    return ESP_OK;
 }
 
 
@@ -166,7 +211,9 @@ void esp_render_task( void * pvParameters) {
     }
 }
 
-extern int16_t amy_in_block[AMY_BLOCK_SIZE*AMY_NCHANS];
+extern int16_t amy_in_block[AMY_BLOCK_SIZE * AMY_NCHANS];
+
+int32_t my_int32_block[AMY_BLOCK_SIZE * AMY_NCHANS];
 
 // Make AMY's FABT run forever , as a FreeRTOS task 
 void esp_fill_audio_buffer_task() {
@@ -174,8 +221,10 @@ void esp_fill_audio_buffer_task() {
     size_t written = 0;
     while(1) {
         AMY_PROFILE_START(AMY_ESP_FILL_BUFFER)
-        i2s_channel_read(rx_handle, amy_in_block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &read, portMAX_DELAY);
-
+        i2s_channel_read(rx_handle, my_int32_block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &read, portMAX_DELAY);
+        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
+            amy_in_block[i] = (int16_t)(my_int32_block[i] >> 16);
+        
         // Get ready to render
         amy_prepare_buffer();
         // Tell the other core to start rendering
@@ -187,9 +236,12 @@ void esp_fill_audio_buffer_task() {
 
         // Write to i2s
         int16_t *block = amy_fill_buffer();
+        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
+            my_int32_block[i] = ((int32_t)block[i]) << 16;
+
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
 
-        i2s_channel_write(tx_handle, block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &written, portMAX_DELAY);
+        i2s_channel_write(tx_handle, my_int32_block, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS, &written, portMAX_DELAY);
 
         if(written != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS || read != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS) {
             fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS);
@@ -222,13 +274,13 @@ amy_err_t esp_amy_init() {
 
 // Setup I2S
 amy_err_t setup_i2s(void) {
-    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_MASTER);
+    i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_SLAVE);  // ************* I2S_ROLE_SLAVE - needs external I2S clock input.
     i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle);
     i2s_std_config_t std_cfg = {
         .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(AMY_SAMPLE_RATE),
-        .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_16BIT, I2S_SLOT_MODE_STEREO),
+        .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),   // *********** I2S_DATA_BIT_WIDTH_32BIT - 32 bits/sample.
         .gpio_cfg = {
-            .mclk = I2S_GPIO_UNUSED,
+            .mclk = I2S_MCLK,       // ********* We specify an MLCK pin.
             .bclk = I2S_BCLK,
             .ws = I2S_LRCLK,
             .dout = I2S_DIN,
@@ -282,6 +334,7 @@ void app_main(void)
     check_init(&i2c_master_init, "i2c_master");
     check_init(&i2c_slave_init, "i2c_slave");
     check_init(&setup_wm8960_i2s, "wm8960");
+    check_init(&setup_pcm9211, "pcm9211");
     check_init(&setup_i2s, "i2s");
     esp_amy_init();
     amy_reset_oscs();
