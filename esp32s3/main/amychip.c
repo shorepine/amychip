@@ -165,6 +165,7 @@ esp_err_t setup_pcm9211(void) {
     fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
     fprintf(stderr, "register 0x6b is 0x%02x\n", pcm9211_readRegister(0x6b));
     fprintf(stderr, "register 0x6a is 0x%02x\n", pcm9211_readRegister(0x6a));
+    fprintf(stderr, "register 0x60 is 0x%02x\n", pcm9211_readRegister(0x60));
     return ESP_OK;
 }
 
