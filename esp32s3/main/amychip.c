@@ -137,6 +137,13 @@ esp_err_t setup_pcm9211(void) {
     pcm9211_writeRegister(0x26, 0x01);  // AUTO selects based on PLL lock error.
     pcm9211_writeRegister(0x6B, 0x00);  // Main output pins are DIR/ADC AUTO
 
+    // PLL sends 512fs as SCK
+    //pcm9211_writeRegister(0x30, 0x02);  // PSCK=0b010, DIR recovered clock is 256fs
+    pcm9211_writeRegister(0x30, 0x04);  // PSCK=0b100, DIR recovered clock is 512fs
+    // XTI SCK as 512fs too
+    //pcm9211_writeRegister(0x31, 0x1A);  // SCK=12.2880, BCK=3.072, LRCK=48k (default)
+    pcm9211_writeRegister(0x31, 0x0A);  // SCK=24.5760=512fs, BCK=3.072, LRCK=48k
+
     // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
     //pcm9211_writeRegister(0x60, 0x00);  // 0x00 = DIR/ADC auto
     pcm9211_writeRegister(0x60, 0x44);  // 0x44 = AUXIN1
@@ -236,15 +243,25 @@ void esp_fill_audio_buffer_task() {
 
         // Write to i2s
         int16_t *block = amy_fill_buffer();
+
+// Debug: Copy I2S input to output to check it works
+#define COPY_I2S_IN_TO_OUT
+
         for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
-            my_int32_block[i] = ((i2s_sample_type)block[i]) << 16;
+#ifdef COPY_I2S_IN_TO_OUT
+            // Add to my_int32_block from above, unmodified
+            my_int32_block[i] += ((i2s_sample_type)block[i]) << 16;
+#else
+            // Overwrite the I2S input values.
+            my_int32_block[i] = ((i2s_sample_type)block[i]);  // << 16;
+#endif
 
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
 
             i2s_channel_write(tx_handle, my_int32_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &written, portMAX_DELAY);
 
-        if(written != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS || read != AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS) {
-            fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * AMY_BYTES_PER_SAMPLE * AMY_NCHANS);
+        if(written != AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS || read != AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS) {
+            fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS);
         }
 
     }
@@ -277,7 +294,13 @@ amy_err_t setup_i2s(void) {
     i2s_chan_config_t chan_cfg = I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_AUTO, I2S_ROLE_SLAVE);  // ************* I2S_ROLE_SLAVE - needs external I2S clock input.
     i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle);
     i2s_std_config_t std_cfg = {
-        .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(AMY_SAMPLE_RATE),
+        //.clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(AMY_SAMPLE_RATE),
+        .clk_cfg = {
+            .sample_rate_hz = 48000,
+            .clk_src = I2S_CLK_SRC_EXTERNAL,
+            .ext_clk_freq_hz = 48000 * 512,
+            .mclk_multiple = 512,
+        },
         .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),   // *********** I2S_DATA_BIT_WIDTH_32BIT - 32 bits/sample.
         .gpio_cfg = {
             .mclk = I2S_MCLK,       // ********* We specify an MLCK pin.
@@ -287,7 +310,7 @@ amy_err_t setup_i2s(void) {
             .din = I2S_DOUT,
             .invert_flags = {
                 .mclk_inv = false,
-                .bclk_inv = false,
+                .bclk_inv = true,
                 .ws_inv = false,
             },
         },
@@ -333,7 +356,7 @@ void app_main(void)
 
     check_init(&i2c_master_init, "i2c_master");
     check_init(&i2c_slave_init, "i2c_slave");
-    check_init(&setup_wm8960_i2s, "wm8960");
+    //check_init(&setup_wm8960_i2s, "wm8960");
     check_init(&setup_pcm9211, "pcm9211");
     check_init(&setup_i2s, "i2s");
     esp_amy_init();
