@@ -1,2 +1,4 @@
 .DS_Store
+esp32s3/build/
+amyboard.b##
 

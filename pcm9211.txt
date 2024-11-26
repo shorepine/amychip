@@ -1,6 +1,6 @@
 # PCM9211 Wiring Hookup
 
-The PCM9211 is used for ADC, for SPDIF (Coax) input, and for SPDIF output.
+The PCM9211 is used for ADC, for SPDIF (Coax) input, and for SPDIF output. 
 This file gives the connections for attaching the "dpwe" PCM9211 carrier board
 to an ESP32-S3 DevKitC1 board [PinNum].
 
