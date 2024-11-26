@@ -245,16 +245,18 @@ void esp_fill_audio_buffer_task() {
         int16_t *block = amy_fill_buffer();
 
 // Debug: Copy I2S input to output to check it works
-#define COPY_I2S_IN_TO_OUT
+//#define COPY_I2S_IN_TO_OUT
 
-        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
+        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i) {
 #ifdef COPY_I2S_IN_TO_OUT
             // Add to my_int32_block from above, unmodified
             my_int32_block[i] += ((i2s_sample_type)block[i]) << 16;
 #else
             // Overwrite the I2S input values.
-            my_int32_block[i] = ((i2s_sample_type)block[i]);  // << 16;
+            my_int32_block[i] = ((i2s_sample_type)block[i]) << 16;
+            //my_int32_block[i] = 0x80A5;  // Bit pattern visible in DOUT.
 #endif
+        }
 
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
 
@@ -301,7 +303,20 @@ amy_err_t setup_i2s(void) {
             .ext_clk_freq_hz = 48000 * 512,
             .mclk_multiple = 512,
         },
-        .slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),   // *********** I2S_DATA_BIT_WIDTH_32BIT - 32 bits/sample.
+        //.slot_cfg = I2S_STD_PHILIPS_SLOT_DEFAULT_CONFIG(I2S_DATA_BIT_WIDTH_32BIT, I2S_SLOT_MODE_STEREO),   // *********** I2S_DATA_BIT_WIDTH_32BIT - 32 bits/sample.
+        .slot_cfg = {
+            .data_bit_width = I2S_DATA_BIT_WIDTH_32BIT,
+            .slot_bit_width = I2S_SLOT_BIT_WIDTH_32BIT,
+            .slot_mode = I2S_SLOT_MODE_STEREO,
+            .slot_mask = I2S_STD_SLOT_BOTH,
+            .ws_width = 32,
+            .ws_pol = false,   // false in STD_PHILIPS macro
+            .bit_shift = false,  // true for STD_PHILIPS macro, but that results in *2* bits delay of dout vs lrclk in Follower mode.  false gives 1 bit delay, as expected for i2s.
+            //.msb_right = false,  // false for bits_per_sample > 16 in STD_PHILIPS
+            .left_align = false,  // false
+            .big_endian = false,  // false
+            .bit_order_lsb = false,  // false
+        },
         .gpio_cfg = {
             .mclk = I2S_MCLK,       // ********* We specify an MLCK pin.
             .bclk = I2S_BCLK,
