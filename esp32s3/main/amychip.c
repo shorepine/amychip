@@ -125,10 +125,7 @@ void pcm9211_writeRegister(uint8_t reg, uint16_t value) {
 esp_err_t setup_pcm9211(void) {
     // #System RST Control
     fprintf(stderr, "setting up pcm9211\n");
-    // #w 80 40 00
-    // w 80 40 33
     pcm9211_writeRegister(0x40, 0x33);  // Power down ADC, power down DIR, power down DIT, power down OSC
-    // w 80 40 C0
     pcm9211_writeRegister(0x40, 0xc0);  // Normal operation for all
 
     // Initialize DIR - both biphase amps on, input from RXIN0
@@ -137,8 +134,10 @@ esp_err_t setup_pcm9211(void) {
     pcm9211_writeRegister(0x26, 0x01);  // AUTO selects based on PLL lock error.
     pcm9211_writeRegister(0x6B, 0x00);  // Main output pins are DIR/ADC AUTO
 
-    pcm9211_writeRegister(0x30, 0x04); // this sets mckl to 512fs
-    pcm9211_writeRegister(0x31, 0x0A); // this sets mckl to 512fs
+    // PLL sends 512fs as SCK
+    pcm9211_writeRegister(0x30, 0x04); 
+    // XTI SCK as 512fs too
+    pcm9211_writeRegister(0x31, 0x0A); 
     
     // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
     pcm9211_writeRegister(0x60, 0x44);  // 0x44 = AUXIN1
@@ -146,13 +145,6 @@ esp_err_t setup_pcm9211(void) {
 
     // Initialize MPIO_C as I2S input to AUXIN1
     pcm9211_writeRegister(0x6F, 0x40);  // MPIO_A = CLKST etc / MPIO_B = AUXIN2 / MPIO_C = AUXIN1
-    delay_ms(500);
-    fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
-    /*
-    fprintf(stderr, "register 0x6b is 0x%02x\n", pcm9211_readRegister(0x6b));
-    fprintf(stderr, "register 0x6a is 0x%02x\n", pcm9211_readRegister(0x6a));
-    fprintf(stderr, "register 0x60 is 0x%02x\n", pcm9211_readRegister(0x60));
-    */
     return ESP_OK;
 }
 
@@ -308,8 +300,8 @@ amy_err_t setup_i2s(void) {
             .slot_mode = I2S_SLOT_MODE_STEREO,
             .slot_mask = I2S_STD_SLOT_BOTH,
             .ws_width = 32,
-            .ws_pol = false, 
-            .bit_shift = false,
+            .ws_pol = false, // false in STD_PHILIPS macro
+            .bit_shift = false, // true for STD_PHILIPS macro, but that results in *2* bits delay of dout vs lrclk in Follower mode. false gives 1 bit delay, as expected for i2s.
             .left_align = false,
             .big_endian = false,
             .bit_order_lsb = false,
@@ -322,7 +314,7 @@ amy_err_t setup_i2s(void) {
             .din = AMYIN,
             .invert_flags = {
                 .mclk_inv = false,
-                .bclk_inv = true,
+                .bclk_inv = true, // invert bclk for pcm9211 
                 .ws_inv = false,
             },
         },
