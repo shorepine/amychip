@@ -16773,7 +16773,8 @@ CONN_06
 - Expanded header with 5V, extra GPIOs
 - GND unused pins?? 
 - Put in dan's board changes &amp; XTAL circuit
-- Confirm power / VPWR / 3v3 / 5v</text>
+- Confirm power / VPWR / 3v3 / 5v
+- Move SPDIF to 3.5mm jacks, confirm RCA pins are right</text>
 </plain>
 <instances>
 <instance part="U1" gate="G$1" x="50.8" y="63.5" smashed="yes">
@@ -17614,11 +17615,6 @@ CONN_06
 <label x="17.78" y="76.2" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="SPDIFOUT" gate="G$1" pin="T"/>
-<wire x1="226.06" y1="198.12" x2="236.22" y2="198.12" width="0.1524" layer="91"/>
-<label x="228.6" y="198.12" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="Y1" gate="G$1" pin="GND"/>
 <wire x1="27.94" y1="-40.64" x2="40.64" y2="-40.64" width="0.1524" layer="91"/>
 <label x="33.02" y="-40.64" size="1.778" layer="95"/>
@@ -17627,6 +17623,26 @@ CONN_06
 <pinref part="SPI" gate="G$1" pin="5"/>
 <wire x1="210.82" y1="99.06" x2="218.44" y2="99.06" width="0.1524" layer="91"/>
 <label x="213.36" y="99.06" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SPDIFIN" gate="G$1" pin="S"/>
+<wire x1="228.6" y1="215.9" x2="236.22" y2="215.9" width="0.1524" layer="91"/>
+<label x="228.6" y="215.9" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SPDIFOUT" gate="G$1" pin="S"/>
+<wire x1="226.06" y1="193.04" x2="236.22" y2="193.04" width="0.1524" layer="91"/>
+<label x="228.6" y="193.04" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SPDIFIN" gate="G$1" pin="G"/>
+<wire x1="228.6" y1="213.36" x2="238.76" y2="213.36" width="0.1524" layer="91"/>
+<label x="228.6" y="213.36" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SPDIFOUT" gate="G$1" pin="G"/>
+<wire x1="226.06" y1="190.5" x2="238.76" y2="190.5" width="0.1524" layer="91"/>
+<label x="228.6" y="190.5" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -18763,22 +18779,17 @@ CONN_06
 </net>
 <net name="SPDIFIN_SIGNAL" class="0">
 <segment>
-<pinref part="SPDIFIN" gate="G$1" pin="S"/>
-<wire x1="228.6" y1="215.9" x2="236.22" y2="215.9" width="0.1524" layer="91"/>
-<label x="228.6" y="215.9" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="C1" gate="C" pin="1"/>
 <wire x1="17.78" y1="121.92" x2="5.08" y2="121.92" width="0.1524" layer="91"/>
 <label x="2.54" y="121.92" size="1.778" layer="95"/>
 </segment>
-</net>
-<net name="GNDRX" class="0">
 <segment>
 <pinref part="SPDIFIN" gate="G$1" pin="T"/>
 <wire x1="228.6" y1="220.98" x2="236.22" y2="220.98" width="0.1524" layer="91"/>
 <label x="228.6" y="220.98" size="1.778" layer="95"/>
 </segment>
+</net>
+<net name="GNDRX" class="0">
 <segment>
 <pinref part="U1" gate="G$1" pin="GNDRX"/>
 <wire x1="73.66" y1="-22.86" x2="86.36" y2="-22.86" width="0.1524" layer="91"/>
@@ -18787,14 +18798,14 @@ CONN_06
 </net>
 <net name="SPDIFOUT_SIGNAL" class="0">
 <segment>
-<pinref part="SPDIFOUT" gate="G$1" pin="S"/>
-<wire x1="226.06" y1="193.04" x2="236.22" y2="193.04" width="0.1524" layer="91"/>
-<label x="228.6" y="193.04" size="1.778" layer="95"/>
-</segment>
-<segment>
 <pinref part="R3" gate="R" pin="1"/>
 <wire x1="10.16" y1="15.24" x2="5.08" y2="15.24" width="0.1524" layer="91"/>
 <label x="-12.7" y="15.24" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="SPDIFOUT" gate="G$1" pin="T"/>
+<wire x1="226.06" y1="198.12" x2="236.22" y2="198.12" width="0.1524" layer="91"/>
+<label x="228.6" y="198.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="XTI" class="0">
