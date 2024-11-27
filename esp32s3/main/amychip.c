@@ -23,20 +23,31 @@ static const char *TAG = "amy-chip";
 i2s_chan_handle_t tx_handle;
 i2s_chan_handle_t rx_handle;
 
-
+#ifdef AMYBOARD_DIY
 #define I2S_MCLK  10
 #define I2S_BCLK  13 
 #define I2S_LRCLK 12
-#define I2S_DIN 11 // data going to the codec, eg DAC data
+#define AMYOUT 11 // data going to the codec, eg DAC data
 #define I2C_SLAVE_SCL 5  
 #define I2C_SLAVE_SDA 4 
 #define I2C_MASTER_SCL 17
 #define I2C_MASTER_SDA 18
-#define I2S_DOUT 16 // data coming from the codec, eg ADC  data
-#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_16BIT
-typedef int16_t i2s_sample_type;
-//#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_32BIT
-//typedef int32_t i2s_sample_type;
+#define AMYIN 16 // data coming from the codec, eg ADC  data
+#elif defined AMYBOARD_R3
+// stuff in the eagle
+#define I2S_MCLK  3
+#define I2S_BCLK  8
+#define I2S_LRCLK 2
+#define AMYOUT 6 // data going to the codec, eg DAC data
+#define I2C_SLAVE_SCL 5
+#define I2C_SLAVE_SDA 4 
+#define I2C_MASTER_SCL 17
+#define I2C_MASTER_SDA 18
+#define AMYIN 9 // data coming from the codec, eg ADC  data
+#endif
+
+#define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_32BIT
+typedef int32_t i2s_sample_type;
 
 
 
@@ -74,24 +85,18 @@ TaskHandle_t alles_fill_buffer_handle;
 #define I2C_SLAVE_NUM I2C_NUMBER(1) /*!< I2C port number for slave dev */
 #define I2C_SLAVE_TX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave tx buffer size */
 #define I2C_SLAVE_RX_BUF_LEN (2 * DATA_LENGTH)              /*!< I2C slave rx buffer size */
-#define ESP_SLAVE_ADDR 0x58             /*!< ESP32 slave address, you can set any 7bit value */
+#define AMYCHIP_ADDR 0x58
+#define PCM9211_ADDR 0x40
 #define I2C_MASTER_NUM I2C_NUMBER(0) /*!< I2C port number for master dev */
 #define I2C_MASTER_TX_BUF_DISABLE 0                           /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0  
 
 i2c_master_bus_handle_t tool_bus_handle;
+i2c_master_dev_handle_t pcm9211_handle;
 #define I2C_TOOL_TIMEOUT_VALUE_MS (50)
 
 esp_err_t i2c_master_write(uint8_t device_addr, uint8_t *data_wr, size_t size_wr) {
-    i2c_device_config_t i2c_dev_conf = {
-        .scl_speed_hz = I2C_CLK_FREQ,
-        .device_address = device_addr, 
-    };
-    i2c_master_dev_handle_t dev_handle;
-    if (i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &dev_handle) != ESP_OK) {
-        return 1;
-    }
-    esp_err_t ret = i2c_master_transmit(dev_handle, data_wr, size_wr, I2C_TOOL_TIMEOUT_VALUE_MS);
+    esp_err_t ret = i2c_master_transmit(pcm9211_handle, data_wr, size_wr, I2C_TOOL_TIMEOUT_VALUE_MS);
     if (ret == ESP_OK) {
         //ESP_LOGI(TAG, "Write OK");
     } else if (ret == ESP_ERR_TIMEOUT) {
@@ -99,40 +104,21 @@ esp_err_t i2c_master_write(uint8_t device_addr, uint8_t *data_wr, size_t size_wr
     } else {
         ESP_LOGW(TAG, "Write Failed");
     }
-    if (i2c_master_bus_rm_device(dev_handle) != ESP_OK) {
-        return 1;
-    }
     return 0;
 }
 
 uint8_t pcm9211_readRegister(uint8_t reg) {
-    i2c_master_dev_handle_t dev_handle;
-    i2c_device_config_t i2c_dev_conf = {
-        .scl_speed_hz = I2C_CLK_FREQ,
-        .device_address = 0x40, 
-    };
-    ESP_ERROR_CHECK(i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &dev_handle));
     uint8_t buf[1] = {reg};
-    uint8_t buffer[2] = { 0};
-    ESP_ERROR_CHECK(i2c_master_transmit_receive(dev_handle, buf, 1, buffer, 1, -1));
+    uint8_t buffer[1] = { 0};
+    ESP_ERROR_CHECK(i2c_master_transmit_receive(pcm9211_handle, buf, 1, buffer, 1, I2C_TOOL_TIMEOUT_VALUE_MS));
     return(buffer[0]);
 }
-
-
-esp_err_t i2c_master_write_wm8960(uint8_t *data_wr, size_t size_wr) {
-    return i2c_master_write(0x1A, data_wr, size_wr);
-}
-
-esp_err_t i2c_master_write_pcm9211(uint8_t *data_wr, size_t size_wr) {
-    return i2c_master_write(0x40, data_wr, size_wr);
-}
-
 
 void pcm9211_writeRegister(uint8_t reg, uint16_t value) {
   uint8_t data[2];
   data[0] = reg; 
   data[1] = value; 
-  if (i2c_master_write_pcm9211(data, 2))
+  if (i2c_master_write(PCM9211_ADDR, data, 2))
       fprintf(stderr, "bad write to pcm9211\n");
 }
 
@@ -151,21 +137,22 @@ esp_err_t setup_pcm9211(void) {
     pcm9211_writeRegister(0x26, 0x01);  // AUTO selects based on PLL lock error.
     pcm9211_writeRegister(0x6B, 0x00);  // Main output pins are DIR/ADC AUTO
 
-    //pcm9211_writeRegister(0x30, 0x04); // this sets mckl to 512fs
-    pcm9211_writeRegister(0x2f, 0x03); // 16-bit MSB right justified
-
+    pcm9211_writeRegister(0x30, 0x04); // this sets mckl to 512fs
+    pcm9211_writeRegister(0x31, 0x0A); // this sets mckl to 512fs
+    
     // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
-    //pcm9211_writeRegister(0x60, 0x00);  // 0x00 = DIR/ADC auto
     pcm9211_writeRegister(0x60, 0x44);  // 0x44 = AUXIN1
     pcm9211_writeRegister(0x78, 0x3d);  // MPO0 = 0b1101 = TXOUT, MPO1 = 0b0011 = VOUT
 
     // Initialize MPIO_C as I2S input to AUXIN1
     pcm9211_writeRegister(0x6F, 0x40);  // MPIO_A = CLKST etc / MPIO_B = AUXIN2 / MPIO_C = AUXIN1
-    
+    delay_ms(500);
     fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
+    /*
     fprintf(stderr, "register 0x6b is 0x%02x\n", pcm9211_readRegister(0x6b));
     fprintf(stderr, "register 0x6a is 0x%02x\n", pcm9211_readRegister(0x6a));
     fprintf(stderr, "register 0x60 is 0x%02x\n", pcm9211_readRegister(0x60));
+    */
     return ESP_OK;
 }
 
@@ -175,11 +162,18 @@ static esp_err_t i2c_master_init(void) {
         .i2c_port = I2C_MASTER_NUM,
         .scl_io_num = I2C_MASTER_SCL,
         .sda_io_num = I2C_MASTER_SDA,
-        .glitch_ignore_cnt = 7,
         .flags.enable_internal_pullup = true,
     };
 
     if (i2c_new_master_bus(&i2c_bus_config, &tool_bus_handle) != ESP_OK) {
+        return 1;
+    }
+    i2c_device_config_t i2c_dev_conf = {
+        .scl_speed_hz = I2C_CLK_FREQ,
+        .device_address = PCM9211_ADDR, 
+        .flags.disable_ack_check = true,
+    };
+    if (i2c_master_bus_add_device(tool_bus_handle, &i2c_dev_conf, &pcm9211_handle) != ESP_OK) {
         return 1;
     }
     return ESP_OK;
@@ -208,7 +202,7 @@ static void i2c_slave_receive_cb(uint8_t num, uint8_t * data, size_t len, bool s
 
 static esp_err_t i2c_slave_init(void) {
     i2cSlaveAttachCallbacks(I2C_SLAVE_NUM, i2c_slave_request_cb, i2c_slave_receive_cb, NULL);
-    return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA, I2C_SLAVE_SCL, ESP_SLAVE_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
+    return i2cSlaveInit(I2C_SLAVE_NUM, I2C_SLAVE_SDA, I2C_SLAVE_SCL, AMYCHIP_ADDR, I2C_CLK_FREQ, I2C_SLAVE_RX_BUF_LEN, I2C_SLAVE_TX_BUF_LEN);
 }
 
 
@@ -232,8 +226,7 @@ void esp_render_task( void * pvParameters) {
 }
 
 extern int16_t amy_in_block[AMY_BLOCK_SIZE * AMY_NCHANS];
-
-//i2s_sample_type my_int32_block[AMY_BLOCK_SIZE * AMY_NCHANS];
+i2s_sample_type my_int32_block[AMY_BLOCK_SIZE * AMY_NCHANS];
 
 // Make AMY's FABT run forever , as a FreeRTOS task 
 void esp_fill_audio_buffer_task() {
@@ -241,14 +234,11 @@ void esp_fill_audio_buffer_task() {
     size_t written = 0;
     while(1) {
         AMY_PROFILE_START(AMY_ESP_FILL_BUFFER)
-        fprintf(stderr, "1\n");
-        //i2s_channel_read(rx_handle, my_int32_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &read, portMAX_DELAY);
-        i2s_channel_read(rx_handle, amy_in_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &read, portMAX_DELAY);
+        i2s_channel_read(rx_handle, my_int32_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &read, portMAX_DELAY);
         
-        //for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
-        //    amy_in_block[i] = (i2s_sample_type)(my_int32_block[i] >> 16);
+        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
+            amy_in_block[i] = (i2s_sample_type)(my_int32_block[i] >> 16);
 
-        fprintf(stderr, "2\n");
         
         // Get ready to render
         amy_prepare_buffer();
@@ -264,16 +254,13 @@ void esp_fill_audio_buffer_task() {
 
         // Write to i2s
         int16_t *block = amy_fill_buffer();
-        //for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
-        //    my_int32_block[i] = ((i2s_sample_type)block[i]) << 16;
+        for (int i = 0; i < AMY_BLOCK_SIZE * AMY_NCHANS; ++i)
+            my_int32_block[i] = ((i2s_sample_type)block[i]) << 16;
 
 
         AMY_PROFILE_STOP(AMY_ESP_FILL_BUFFER)
-        fprintf(stderr, "3\n");
 
-        //i2s_channel_write(tx_handle, my_int32_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &written, portMAX_DELAY);
-        i2s_channel_write(tx_handle, block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &written, portMAX_DELAY);
-        fprintf(stderr, "4\n");
+        i2s_channel_write(tx_handle, my_int32_block, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS, &written, portMAX_DELAY);
 
         if(written != AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS || read != AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS) {
             fprintf(stderr,"i2s underrun: [w %d,r %d] vs %d\n", written, read, AMY_BLOCK_SIZE * sizeof(i2s_sample_type) * AMY_NCHANS);
@@ -309,23 +296,37 @@ amy_err_t setup_i2s(void) {
     i2s_new_channel(&chan_cfg, &tx_handle, &rx_handle);
 
      i2s_std_config_t std_cfg = {
-        .clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(48000),
-        .slot_cfg = I2S_STD_MSB_SLOT_DEFAULT_CONFIG(16, I2S_SLOT_MODE_STEREO),
+        .clk_cfg = {
+            .sample_rate_hz = 48000,
+            .clk_src = I2S_CLK_SRC_EXTERNAL,
+            .ext_clk_freq_hz = 48000 * 512,
+            .mclk_multiple = 512, 
+        },
+        .slot_cfg = {
+            .data_bit_width = I2S_DATA_BIT_WIDTH_32BIT,
+            .slot_bit_width = I2S_SLOT_BIT_WIDTH_32BIT,
+            .slot_mode = I2S_SLOT_MODE_STEREO,
+            .slot_mask = I2S_STD_SLOT_BOTH,
+            .ws_width = 32,
+            .ws_pol = false, 
+            .bit_shift = false,
+            .left_align = false,
+            .big_endian = false,
+            .bit_order_lsb = false,
+        },
         .gpio_cfg = {
-            .mclk = I2S_MCLK,       // ********* We specify an MLCK pin.
+            .mclk = I2S_MCLK, 
             .bclk = I2S_BCLK,
             .ws = I2S_LRCLK,
-            .dout = I2S_DOUT,
-            .din = I2S_DIN,
+            .dout = AMYOUT,
+            .din = AMYIN,
             .invert_flags = {
                 .mclk_inv = false,
-                .bclk_inv = false,
+                .bclk_inv = true,
                 .ws_inv = false,
             },
         },
     };
-    std_cfg.clk_cfg.clk_src = I2S_CLK_SRC_EXTERNAL;
-    std_cfg.clk_cfg.ext_clk_freq_hz = 48000*256;
 
     /* Initialize the channel */
     i2s_channel_init_std_mode(tx_handle, &std_cfg);
@@ -372,7 +373,6 @@ void app_main(void)
     
 
     // make this 1 if you want to actually turn on i2s... it is currently hanging as it can't find MCLK on the pin....
-    #if 0
     check_init(&setup_i2s, "i2s");
     esp_amy_init();
     amy_reset_oscs();
@@ -383,13 +383,13 @@ void app_main(void)
     e.wave = SINE;
     e.osc = 0;
     e.velocity = 1;
-    amy_add_event(e);
+    //amy_add_event(e);
     example_voice_chord(amy_sysclock(), 0);
-    #endif
 
     while(1) {
         delay_ms(1000);
-        fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
+            fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
+
 
     }
 }
