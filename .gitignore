@@ -1,4 +1,5 @@
 .DS_Store
 esp32s3/build/
 amyboard.b##
-
+pcbs/amyboardr3.b#*
+pcbs/amyboardr3.s#*
