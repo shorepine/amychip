@@ -3,3 +3,6 @@ esp32s3/build/
 amyboard.b##
 pcbs/amyboardr3.b#*
 pcbs/amyboardr3.s#*
+pcbs/amyboardr4.b#*
+pcbs/amyboardr4.s#*
+
