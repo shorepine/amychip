@@ -16693,7 +16693,7 @@ CONN_06x2
 <part name="R96" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="0R"/>
 <part name="R97" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="88.7K"/>
 <part name="R98" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="12K"/>
-<part name="Y1" library="ABM10W-22.5792MHZ-8-K1Z-T3" deviceset="ABM10W-22.5792MHZ-8-K1Z-T3" device=""/>
+<part name="Y1" library="ABM10W-22.5792MHZ-8-K1Z-T3" deviceset="ABM10W-22.5792MHZ-8-K1Z-T3" device="" value="22.5792MHZ"/>
 <part name="C1" library="Discrete-new" deviceset="CAP" device="-0603" value="0.1uF"/>
 <part name="C2" library="microbuilder" deviceset="CAP_ELECTROLYTIC" device="PANASONIC_C" value="10uF"/>
 <part name="C3" library="microbuilder" deviceset="CAP_ELECTROLYTIC" device="PANASONIC_C" value="10uF"/>
