@@ -16783,13 +16783,11 @@ CONN_06x2
 <text x="192.786" y="113.538" size="5.08" layer="97">HEADERS</text>
 <text x="294.64" y="190.5" size="3.81" layer="97">NOTES/TODO:
 
-- RXGND? Is it just GND? 
 - MabeeDAC to provide VOUT0 and VOUT1
-- Expanded header with 5V, extra GPIOs, UART
-- I2C main grove/mabee connector as well ??
 - NC/GND unused pins
-- Confirm power / VPWR / 3v3 / 5v
-- Remove/test single USB NATIVE port</text>
+- 12V -&gt; 5V regulator for modular port
+- Confirm VOUT / VPWR / 3v3 / 5v / 12V
+</text>
 <text x="129.54" y="-54.61" size="5.08" layer="97">TF Card</text>
 <text x="193.548" y="-73.406" size="1.778" layer="97">D3</text>
 <text x="193.548" y="-75.946" size="1.778" layer="97">CMD</text>
