@@ -16528,7 +16528,7 @@ CONN_06x2
 </classes>
 <parts>
 <part name="U1" library="PCM9211PT" deviceset="PCM9211PT" device=""/>
-<part name="I2C1" library="Connector-new" deviceset="GROVE-CONNECTOR-SMD" device="'90D'"/>
+<part name="I2C_CONTROL" library="Connector-new" deviceset="GROVE-CONNECTOR-SMD" device="'90D'"/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND86" library="supply1" deviceset="GND" device=""/>
 <part name="GND95" library="supply1" deviceset="GND" device=""/>
@@ -16698,7 +16698,8 @@ CONN_06x2
 <part name="CV_OUT1" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
 <part name="CV_OUT2" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
 <part name="SPDIF_IN" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
-<part name="U$16" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
+<part name="SPDIF_OUT" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
+<part name="I2C_HOST" library="Connector-new" deviceset="GROVE-CONNECTOR-SMD" device="'90D'"/>
 </parts>
 <sheets>
 <sheet>
@@ -16740,7 +16741,7 @@ CONN_06x2
 <attribute name="NAME" x="33.02" y="153.4" size="2.0828" layer="95" ratio="10" rot="SR0"/>
 <attribute name="VALUE" x="33.02" y="-29.4" size="2.0828" layer="96" ratio="10" rot="SR0"/>
 </instance>
-<instance part="I2C1" gate="G$1" x="215.9" y="64.77" smashed="yes">
+<instance part="I2C_CONTROL" gate="G$1" x="215.9" y="64.77" smashed="yes">
 <attribute name="NAME" x="208.28" y="71.12" size="1.27" layer="95" ratio="10"/>
 <attribute name="VALUE" x="217.17" y="71.12" size="1.27" layer="96" ratio="10"/>
 </instance>
@@ -17340,8 +17341,12 @@ CONN_06x2
 <instance part="SPDIF_IN" gate="G$1" x="-27.94" y="215.9" smashed="yes">
 <attribute name="NAME" x="-33.02" y="221.488" size="1.778" layer="95"/>
 </instance>
-<instance part="U$16" gate="G$1" x="-22.86" y="185.42" smashed="yes">
+<instance part="SPDIF_OUT" gate="G$1" x="-22.86" y="185.42" smashed="yes">
 <attribute name="NAME" x="-27.94" y="191.008" size="1.778" layer="95"/>
+</instance>
+<instance part="I2C_HOST" gate="G$1" x="243.84" y="67.31" smashed="yes">
+<attribute name="NAME" x="236.22" y="73.66" size="1.27" layer="95" ratio="10"/>
+<attribute name="VALUE" x="245.11" y="73.66" size="1.27" layer="96" ratio="10"/>
 </instance>
 </instances>
 <busses>
@@ -17349,16 +17354,16 @@ CONN_06x2
 <nets>
 <net name="GND" class="0">
 <segment>
-<pinref part="I2C1" gate="G$1" pin="SS2"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="SS2"/>
 <wire x1="215.9" y1="57.15" x2="215.9" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="I2C1" gate="G$1" pin="SS1"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="SS1"/>
 <wire x1="215.9" y1="55.88" x2="215.9" y2="54.61" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="72.39" x2="215.9" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="73.66" x2="219.71" y2="73.66" width="0.1524" layer="91"/>
 <wire x1="219.71" y1="73.66" x2="219.71" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="219.71" y1="55.88" x2="215.9" y2="55.88" width="0.1524" layer="91"/>
 <junction x="215.9" y="55.88"/>
-<pinref part="I2C1" gate="G$1" pin="4"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="4"/>
 <wire x1="210.82" y1="60.96" x2="209.55" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="209.55" y1="60.96" x2="209.55" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="209.55" y1="55.88" x2="215.9" y2="55.88" width="0.1524" layer="91"/>
@@ -17639,7 +17644,7 @@ CONN_06x2
 <wire x1="-15.24" y1="193.04" x2="0" y2="193.04" width="0.1524" layer="91"/>
 <label x="-5.08" y="193.04" size="1.778" layer="95"/>
 <wire x1="-15.24" y1="193.04" x2="-15.24" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="U$16" gate="G$1" pin="EARTH"/>
+<pinref part="SPDIF_OUT" gate="G$1" pin="EARTH"/>
 <wire x1="-15.24" y1="190.5" x2="-17.78" y2="190.5" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -17769,11 +17774,28 @@ CONN_06x2
 <wire x1="-15.24" y1="124.46" x2="-35.56" y2="124.46" width="0.1524" layer="91"/>
 <label x="-22.86" y="124.46" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="I2C_HOST" gate="G$1" pin="SS1"/>
+<wire x1="243.84" y1="74.93" x2="248.92" y2="74.93" width="0.1524" layer="91"/>
+<wire x1="248.92" y1="74.93" x2="248.92" y2="76.2" width="0.1524" layer="91"/>
+<label x="243.84" y="76.2" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="I2C_HOST" gate="G$1" pin="4"/>
+<wire x1="238.76" y1="63.5" x2="231.14" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="63.5" x2="231.14" y2="59.69" width="0.1524" layer="91"/>
+<pinref part="I2C_HOST" gate="G$1" pin="SS2"/>
+<wire x1="231.14" y1="59.69" x2="243.84" y2="59.69" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="59.69" x2="243.84" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="55.88" x2="238.76" y2="55.88" width="0.1524" layer="91"/>
+<junction x="243.84" y="59.69"/>
+<label x="238.76" y="55.88" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="+3V3" class="0">
 <segment>
 <label x="207.645" y="64.135" size="0.8128" layer="95"/>
-<pinref part="I2C1" gate="G$1" pin="3"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="3"/>
 <wire x1="198.12" y1="63.5" x2="210.82" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="72.39" x2="198.12" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="+3V11" gate="G$1" pin="+3V3"/>
@@ -17952,6 +17974,11 @@ CONN_06x2
 <pinref part="HOST" gate="G$1" pin="5"/>
 <wire x1="231.14" y1="93.98" x2="226.06" y2="93.98" width="0.1524" layer="91"/>
 <label x="226.06" y="93.98" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="I2C_HOST" gate="G$1" pin="3"/>
+<wire x1="238.76" y1="66.04" x2="231.14" y2="66.04" width="0.1524" layer="91"/>
+<label x="233.68" y="66.04" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="RESET" class="0">
@@ -18567,7 +18594,7 @@ CONN_06x2
 <label x="101.6" y="94.234" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="I2C1" gate="G$1" pin="2"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="2"/>
 <wire x1="210.82" y1="66.04" x2="199.39" y2="66.04" width="0.1524" layer="91"/>
 <label x="199.136" y="66.548" size="1.27" layer="95" ratio="5"/>
 </segment>
@@ -18603,6 +18630,11 @@ CONN_06x2
 <pinref part="U1" gate="G$1" pin="MC/SCL"/>
 <wire x1="27.94" y1="86.36" x2="17.78" y2="86.36" width="0.1524" layer="91"/>
 <label x="15.24" y="86.36" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="I2C_HOST" gate="G$1" pin="1"/>
+<wire x1="238.76" y1="71.12" x2="231.14" y2="71.12" width="0.1524" layer="91"/>
+<label x="228.6" y="71.12" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="PWM0" class="0">
@@ -18900,6 +18932,11 @@ CONN_06x2
 <wire x1="27.94" y1="81.28" x2="17.78" y2="81.28" width="0.1524" layer="91"/>
 <label x="15.24" y="81.28" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="I2C_HOST" gate="G$1" pin="2"/>
+<wire x1="238.76" y1="68.58" x2="231.14" y2="68.58" width="0.1524" layer="91"/>
+<label x="228.6" y="68.58" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="N$1" class="0">
 <segment>
@@ -18934,7 +18971,7 @@ CONN_06x2
 <wire x1="-10.16" y1="182.88" x2="-10.16" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="-10.16" y1="177.8" x2="-15.24" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="-15.24" y1="177.8" x2="-15.24" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="U$16" gate="G$1" pin="TIP"/>
+<pinref part="SPDIF_OUT" gate="G$1" pin="TIP"/>
 <wire x1="-15.24" y1="187.96" x2="-17.78" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -19024,7 +19061,7 @@ CONN_06x2
 <label x="101.6" y="91.694" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="I2C1" gate="G$1" pin="1"/>
+<pinref part="I2C_CONTROL" gate="G$1" pin="1"/>
 <wire x1="210.82" y1="68.58" x2="199.39" y2="68.58" width="0.1524" layer="91"/>
 <label x="199.136" y="69.088" size="1.27" layer="95"/>
 </segment>
@@ -19275,7 +19312,7 @@ CONN_06x2
 <pinref part="U$1" gate="G$1" pin="P$1"/>
 <wire x1="-10.16" y1="190.5" x2="-12.7" y2="190.5" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="190.5" x2="-12.7" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="U$16" gate="G$1" pin="RING"/>
+<pinref part="SPDIF_OUT" gate="G$1" pin="RING"/>
 <wire x1="-12.7" y1="182.88" x2="-17.78" y2="182.88" width="0.1524" layer="91"/>
 </segment>
 </net>
