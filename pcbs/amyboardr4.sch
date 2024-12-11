@@ -15506,78 +15506,6 @@ CONN_06x2
 </deviceset>
 </devicesets>
 </library>
-<library name="TPS61040DBVR">
-<packages>
-<package name="SOT95P280X145-5N">
-<circle x="-2.41" y="1.05" radius="0.1" width="0.2" layer="21"/>
-<circle x="-2.41" y="1.05" radius="0.1" width="0.2" layer="51"/>
-<text x="-2.6" y="2" size="1.016" layer="25">&gt;NAME</text>
-<text x="-2.6" y="-2" size="1.016" layer="27" align="top-left">&gt;VALUE</text>
-<wire x1="-0.33" y1="1.45" x2="0.33" y2="1.45" width="0.127" layer="21"/>
-<wire x1="0.8" y1="0.335" x2="0.8" y2="-0.335" width="0.127" layer="21"/>
-<wire x1="0.33" y1="-1.45" x2="-0.33" y2="-1.45" width="0.127" layer="21"/>
-<wire x1="-0.8" y1="-1.45" x2="-0.8" y2="1.45" width="0.127" layer="51"/>
-<wire x1="0.8" y1="1.45" x2="0.8" y2="-1.45" width="0.127" layer="51"/>
-<wire x1="-0.8" y1="1.45" x2="0.8" y2="1.45" width="0.127" layer="51"/>
-<wire x1="0.8" y1="-1.45" x2="-0.8" y2="-1.45" width="0.127" layer="51"/>
-<wire x1="-2.11" y1="1.7" x2="2.11" y2="1.7" width="0.05" layer="39"/>
-<wire x1="2.11" y1="1.7" x2="2.11" y2="-1.7" width="0.05" layer="39"/>
-<wire x1="2.11" y1="-1.7" x2="-2.11" y2="-1.7" width="0.05" layer="39"/>
-<wire x1="-2.11" y1="-1.7" x2="-2.11" y2="1.7" width="0.05" layer="39"/>
-<smd name="1" x="-1.255" y="0.95" dx="1.21" dy="0.59" layer="1" roundness="50"/>
-<smd name="2" x="-1.255" y="0" dx="1.21" dy="0.59" layer="1" roundness="50"/>
-<smd name="3" x="-1.255" y="-0.95" dx="1.21" dy="0.59" layer="1" roundness="50"/>
-<smd name="4" x="1.255" y="-0.95" dx="1.21" dy="0.59" layer="1" roundness="50"/>
-<smd name="5" x="1.255" y="0.95" dx="1.21" dy="0.59" layer="1" roundness="50"/>
-</package>
-</packages>
-<symbols>
-<symbol name="TPS61040DBVR">
-<wire x1="-12.7" y1="10.16" x2="12.7" y2="10.16" width="0.41" layer="94"/>
-<wire x1="12.7" y1="10.16" x2="12.7" y2="-10.16" width="0.41" layer="94"/>
-<wire x1="12.7" y1="-10.16" x2="-12.7" y2="-10.16" width="0.41" layer="94"/>
-<wire x1="-12.7" y1="-10.16" x2="-12.7" y2="10.16" width="0.41" layer="94"/>
-<text x="-12.7" y="11.16" size="2.0828" layer="95" ratio="10" rot="SR0">&gt;NAME</text>
-<text x="-12.7" y="-14.16" size="2.0828" layer="96" ratio="10" rot="SR0">&gt;VALUE</text>
-<pin name="EN" x="-17.78" y="7.62" length="middle" direction="in"/>
-<pin name="FB" x="-17.78" y="5.08" length="middle" direction="in"/>
-<pin name="VIN" x="-17.78" y="2.54" length="middle" direction="in"/>
-<pin name="SW" x="-17.78" y="-2.54" length="middle"/>
-<pin name="GND" x="17.78" y="7.62" length="middle" direction="pwr" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="TPS61040DBVR" prefix="U">
-<description> &lt;a href="https://pricing.snapeda.com/parts/TPS61040DBVR/Texas%20Instruments/view-part?ref=eda"&gt;Check availability&lt;/a&gt;</description>
-<gates>
-<gate name="A" symbol="TPS61040DBVR" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="SOT95P280X145-5N">
-<connects>
-<connect gate="A" pin="EN" pad="4"/>
-<connect gate="A" pin="FB" pad="3"/>
-<connect gate="A" pin="GND" pad="2"/>
-<connect gate="A" pin="SW" pad="1"/>
-<connect gate="A" pin="VIN" pad="5"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="AVAILABILITY" value="In Stock"/>
-<attribute name="CHECK_PRICES" value="https://www.snapeda.com/parts/TPS61040DBVR/Texas+Instruments/view-part/?ref=eda"/>
-<attribute name="DESCRIPTION" value="                                                      28-V, 400-mA Switch Boost Converter in SOT-23 for LCD and White LED Applications                                              "/>
-<attribute name="MF" value="Texas Instruments"/>
-<attribute name="MP" value="TPS61040DBVR"/>
-<attribute name="PACKAGE" value="SOT-23-5 Texas Instruments"/>
-<attribute name="PRICE" value="None"/>
-<attribute name="SNAPEDA_LINK" value="https://www.snapeda.com/parts/TPS61040DBVR/Texas+Instruments/view-part/?ref=snap"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="TL074CD">
 <packages>
 <package name="SOIC127P600X175-14N">
@@ -15669,136 +15597,6 @@ CONN_06x2
 <attribute name="PACKAGE" value="SOIC-14 Texas Instruments"/>
 <attribute name="PRICE" value="None"/>
 <attribute name="SNAPEDA_LINK" value="https://www.snapeda.com/parts/TL074CD/Texas+Instruments/view-part/?ref=snap"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
-<library name="1269AS-H-100N_P2">
-<packages>
-<package name="INDC2520X100N">
-<text x="-1.96" y="-1.45" size="0.5" layer="27" align="top-left">&gt;VALUE</text>
-<text x="-1.96" y="1.45" size="0.5" layer="25">&gt;NAME</text>
-<wire x1="1.35" y1="-1.1" x2="-1.35" y2="-1.1" width="0.127" layer="51"/>
-<wire x1="1.35" y1="1.1" x2="-1.35" y2="1.1" width="0.127" layer="51"/>
-<wire x1="1.35" y1="-1.1" x2="1.35" y2="1.1" width="0.127" layer="51"/>
-<wire x1="-1.35" y1="-1.1" x2="-1.35" y2="1.1" width="0.127" layer="51"/>
-<wire x1="-0.15" y1="1.1" x2="0.15" y2="1.1" width="0.127" layer="21"/>
-<wire x1="-0.15" y1="-1.1" x2="0.15" y2="-1.1" width="0.127" layer="21"/>
-<wire x1="-1.958" y1="-1.358" x2="1.958" y2="-1.358" width="0.05" layer="39"/>
-<wire x1="-1.958" y1="1.358" x2="1.958" y2="1.358" width="0.05" layer="39"/>
-<wire x1="-1.958" y1="-1.358" x2="-1.958" y2="1.358" width="0.05" layer="39"/>
-<wire x1="1.958" y1="-1.358" x2="1.958" y2="1.358" width="0.05" layer="39"/>
-<smd name="1" x="-1.09" y="0" dx="1.24" dy="2.22" layer="1"/>
-<smd name="2" x="1.09" y="0" dx="1.24" dy="2.22" layer="1"/>
-</package>
-</packages>
-<symbols>
-<symbol name="1269AS-H-100N=P2">
-<text x="-7.62" y="5.08" size="1.778" layer="95">&gt;NAME</text>
-<text x="-7.62" y="2.54" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="-5.08" y1="0" x2="-2.54" y2="0" width="0.254" layer="94" curve="-180"/>
-<wire x1="-2.54" y1="0" x2="0" y2="0" width="0.254" layer="94" curve="-180"/>
-<wire x1="0" y1="0" x2="2.54" y2="0" width="0.254" layer="94" curve="-180"/>
-<wire x1="2.54" y1="0" x2="5.08" y2="0" width="0.254" layer="94" curve="-180"/>
-<pin name="1" x="-7.62" y="0" visible="off" length="short" direction="pas"/>
-<pin name="2" x="7.62" y="0" visible="off" length="short" direction="pas" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="1269AS-H-100N=P2" prefix="L">
-<description>10 UH 30% 1.0A MAX &lt;a href="https://pricing.snapeda.com/parts/1269AS-H-100N%3DP2/Murata%20Electronics/view-part?ref=eda"&gt;Check availability&lt;/a&gt;</description>
-<gates>
-<gate name="G$1" symbol="1269AS-H-100N=P2" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="INDC2520X100N">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="AVAILABILITY" value="In Stock"/>
-<attribute name="CHECK_PRICES" value="https://www.snapeda.com/parts/1269AS-H-100N=P2/Murata+Electronics+North+America/view-part/?ref=eda"/>
-<attribute name="DESCRIPTION" value="                                                      Inductor with Inductance: 10uH Tol. +/-30%, Package: 1008 (2520)                                              "/>
-<attribute name="MF" value="Murata Electronics"/>
-<attribute name="MP" value="1269AS-H-100N=P2"/>
-<attribute name="PACKAGE" value="2520 Murata"/>
-<attribute name="PRICE" value="None"/>
-<attribute name="SNAPEDA_LINK" value="https://www.snapeda.com/parts/1269AS-H-100N=P2/Murata+Electronics+North+America/view-part/?ref=snap"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
-<library name="1N5819HW-7-F">
-<packages>
-<package name="SOD3715X145N">
-<wire x1="-1.425" y1="0.85" x2="1.425" y2="0.85" width="0.127" layer="51"/>
-<wire x1="1.425" y1="0.85" x2="1.425" y2="-0.85" width="0.127" layer="51"/>
-<wire x1="1.425" y1="-0.85" x2="-1.425" y2="-0.85" width="0.127" layer="51"/>
-<wire x1="-1.425" y1="-0.85" x2="-1.425" y2="0.85" width="0.127" layer="51"/>
-<wire x1="1.425" y1="-0.85" x2="-1.425" y2="-0.85" width="0.127" layer="21"/>
-<wire x1="-1.425" y1="0.85" x2="1.425" y2="0.85" width="0.127" layer="21"/>
-<wire x1="-2.535" y1="1.1" x2="2.535" y2="1.1" width="0.05" layer="39"/>
-<wire x1="2.535" y1="1.1" x2="2.535" y2="-1.1" width="0.05" layer="39"/>
-<wire x1="2.535" y1="-1.1" x2="-2.535" y2="-1.1" width="0.05" layer="39"/>
-<wire x1="-2.535" y1="-1.1" x2="-2.535" y2="1.1" width="0.05" layer="39"/>
-<text x="-2.50416875" y="1.252090625" size="0.610615625" layer="25">&gt;NAME</text>
-<text x="-2.501309375" y="-1.75091875" size="0.60991875" layer="27">&gt;VALUE</text>
-<circle x="-3" y="0" radius="0.1" width="0.2" layer="51"/>
-<circle x="-3" y="0" radius="0.1" width="0.2" layer="21"/>
-<smd name="C" x="-1.68" y="0" dx="1.21" dy="0.73" layer="1"/>
-<smd name="A" x="1.68" y="0" dx="1.21" dy="0.73" layer="1"/>
-</package>
-</packages>
-<symbols>
-<symbol name="1N5819HW-7-F">
-<text x="-5.08" y="2.54" size="1.778" layer="95">&gt;NAME</text>
-<text x="-5.08" y="-3.81" size="1.778" layer="96">&gt;VALUE</text>
-<wire x1="-1.27" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="-1.27" y2="1.27" width="0.254" layer="94"/>
-<wire x1="1.905" y1="1.27" x2="1.27" y2="1.27" width="0.254" layer="94"/>
-<wire x1="1.27" y1="1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="-1.27" y1="1.27" x2="-1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="-1.27" y1="0" x2="-1.27" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="1.27" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="1.905" y1="1.27" x2="1.905" y2="1.016" width="0.254" layer="94"/>
-<wire x1="1.27" y1="-1.27" x2="0.635" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0.635" y1="-1.016" x2="0.635" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="-2.54" y1="0" x2="-1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="2.54" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
-<pin name="K" x="5.08" y="0" visible="off" length="short" direction="pas" rot="R180"/>
-<pin name="A" x="-5.08" y="0" visible="off" length="short" direction="pas"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="1N5819HW-7-F" prefix="D">
-<description>1N5819HW Series 40 V 1 A Surface Mount Schottky Barrier Rectifier - SOD-123 &lt;a href="https://pricing.snapeda.com/parts/1N5819HW-7-F/Diodes%20Inc./view-part?ref=eda"&gt;Check availability&lt;/a&gt;</description>
-<gates>
-<gate name="G$1" symbol="1N5819HW-7-F" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="SOD3715X145N">
-<connects>
-<connect gate="G$1" pin="A" pad="A"/>
-<connect gate="G$1" pin="K" pad="C"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="AVAILABILITY" value="In Stock"/>
-<attribute name="CHECK_PRICES" value="https://www.snapeda.com/parts/1N5819HW-7-F/Diodes+Inc./view-part/?ref=eda"/>
-<attribute name="DESCRIPTION" value="                                                      Diode Schottky 1A 40V SOD123 | Diodes Inc 1N5819HW-7-F                                              "/>
-<attribute name="MF" value="Diodes Inc."/>
-<attribute name="MP" value="1N5819HW-7-F"/>
-<attribute name="PACKAGE" value="SOD-123 Fairchild Semiconductor"/>
-<attribute name="PRICE" value="None"/>
-<attribute name="SNAPEDA_LINK" value="https://www.snapeda.com/parts/1N5819HW-7-F/Diodes+Inc./view-part/?ref=snap"/>
 </technology>
 </technologies>
 </device>
@@ -16209,14 +16007,6 @@ CONN_06x2
 <part name="I2C_HOST" library="Connector-new" deviceset="GROVE-CONNECTOR-SMD" device="'90D'"/>
 <part name="U$7" library="FL5160MX" deviceset="GP8413" device=""/>
 <part name="U4" library="TL074CD" deviceset="TL074CD" device=""/>
-<part name="U5" library="TPS61040DBVR" deviceset="TPS61040DBVR" device=""/>
-<part name="L2" library="1269AS-H-100N_P2" deviceset="1269AS-H-100N=P2" device=""/>
-<part name="D4" library="1N5819HW-7-F" deviceset="1N5819HW-7-F" device=""/>
-<part name="R12" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="1M"/>
-<part name="R13" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="115K"/>
-<part name="C25" library="Discrete-new" deviceset="CAP" device="-0603" value="22pF"/>
-<part name="D5" library="1N5819HW-7-F" deviceset="1N5819HW-7-F" device=""/>
-<part name="D6" library="1N5819HW-7-F" deviceset="1N5819HW-7-F" device=""/>
 <part name="U6" library="self" deviceset="HX3608" device=""/>
 <part name="D8" library="diode" deviceset="DIODE-" device="DO-214AC" value="SS54"/>
 <part name="C27" library="Discrete-new" deviceset="CAP" device="-0603" value="22uF"/>
@@ -16291,7 +16081,6 @@ CONN_06x2
 <text x="192.786" y="113.538" size="5.08" layer="97">HEADERS</text>
 <text x="294.64" y="190.5" size="3.81" layer="97">NOTES/TODO:
 
-- MabeeDAC to provide VOUT0 and VOUT1
 - NC/GND unused pins
 - 12V -&gt; 5V regulator for modular port
 - Confirm VOUT / VPWR / 3v3 / 5v / 12V
@@ -16895,38 +16684,6 @@ CONN_06x2
 <instance part="U4" gate="A" x="-210.82" y="-30.48" smashed="yes">
 <attribute name="NAME" x="-223.52" y="-11.7" size="2.0828" layer="95" ratio="10" rot="SR0"/>
 <attribute name="VALUE" x="-223.52" y="-52.26" size="2.0828" layer="96" ratio="10" rot="SR0"/>
-</instance>
-<instance part="U5" gate="A" x="7.62" y="-172.72" smashed="yes" rot="R90">
-<attribute name="NAME" x="-3.54" y="-185.42" size="2.0828" layer="95" ratio="10" rot="SR90"/>
-<attribute name="VALUE" x="21.78" y="-185.42" size="2.0828" layer="96" ratio="10" rot="SR90"/>
-</instance>
-<instance part="L2" gate="G$1" x="5.08" y="-205.74" smashed="yes" rot="R90">
-<attribute name="NAME" x="0" y="-213.36" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="2.54" y="-213.36" size="1.778" layer="96" rot="R90"/>
-</instance>
-<instance part="D4" gate="G$1" x="5.08" y="-218.44" smashed="yes" rot="R270">
-<attribute name="NAME" x="7.62" y="-213.36" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="1.27" y="-213.36" size="1.778" layer="96" rot="R270"/>
-</instance>
-<instance part="R12" gate="R" x="10.16" y="-232.41" smashed="yes" rot="R180">
-<attribute name="NAME" x="10.16" y="-233.68" size="1.27" layer="95" ratio="10" rot="R270"/>
-<attribute name="VALUE" x="9.144" y="-233.426" size="1.27" layer="96" ratio="10" rot="R270"/>
-</instance>
-<instance part="R13" gate="R" x="17.78" y="-232.41" smashed="yes" rot="R180">
-<attribute name="NAME" x="17.78" y="-233.68" size="1.27" layer="95" ratio="10" rot="R270"/>
-<attribute name="VALUE" x="16.764" y="-233.426" size="1.27" layer="96" ratio="10" rot="R270"/>
-</instance>
-<instance part="C25" gate="C" x="11.43" y="-223.52" smashed="yes">
-<attribute name="NAME" x="10.414" y="-227.076" size="1.27" layer="95" ratio="10" rot="R90"/>
-<attribute name="VALUE" x="13.716" y="-229.362" size="1.27" layer="96" ratio="10" rot="R90"/>
-</instance>
-<instance part="D5" gate="G$1" x="35.56" y="-254" smashed="yes" rot="R270">
-<attribute name="NAME" x="38.1" y="-254" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="31.75" y="-248.92" size="1.778" layer="96" rot="R270"/>
-</instance>
-<instance part="D6" gate="G$1" x="45.72" y="-259.08" smashed="yes">
-<attribute name="NAME" x="40.64" y="-256.54" size="1.778" layer="95"/>
-<attribute name="VALUE" x="40.64" y="-262.89" size="1.778" layer="96"/>
 </instance>
 <instance part="U6" gate="G$1" x="261.62" y="-91.44" smashed="yes">
 <attribute name="NAME" x="259.08" y="-104.14" size="1.778" layer="95"/>
@@ -17549,18 +17306,6 @@ CONN_06x2
 <label x="238.76" y="55.88" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U5" gate="A" pin="GND"/>
-<wire x1="10.16" y1="-154.94" x2="0" y2="-154.94" width="0.1524" layer="91"/>
-<label x="12.7" y="-154.94" size="1.778" layer="95" rot="R90"/>
-</segment>
-<segment>
-<pinref part="R13" gate="R" pin="1"/>
-<wire x1="21.59" y1="-232.41" x2="27.94" y2="-232.41" width="0.1524" layer="91"/>
-<wire x1="27.94" y1="-232.41" x2="27.94" y2="-231.14" width="0.1524" layer="91"/>
-<label x="27.94" y="-231.14" size="1.778" layer="95" rot="R90"/>
-<wire x1="27.94" y1="-231.14" x2="27.94" y2="-223.52" width="0.1524" layer="91"/>
-</segment>
-<segment>
 <wire x1="247.65" y1="-97.79" x2="247.65" y2="-93.98" width="0.1524" layer="91"/>
 <pinref part="U6" gate="G$1" pin="GND"/>
 <wire x1="247.65" y1="-93.98" x2="248.92" y2="-93.98" width="0.1524" layer="91"/>
@@ -17826,18 +17571,6 @@ CONN_06x2
 <pinref part="I2C_HOST" gate="G$1" pin="3"/>
 <wire x1="238.76" y1="66.04" x2="231.14" y2="66.04" width="0.1524" layer="91"/>
 <label x="233.68" y="66.04" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="U5" gate="A" pin="VIN"/>
-<wire x1="5.08" y1="-190.5" x2="5.08" y2="-198.12" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="-198.12" x2="0" y2="-198.12" width="0.1524" layer="91"/>
-<pinref part="U5" gate="A" pin="EN"/>
-<wire x1="0" y1="-190.5" x2="0" y2="-198.12" width="0.1524" layer="91"/>
-<wire x1="0" y1="-198.12" x2="-5.08" y2="-198.12" width="0.1524" layer="91"/>
-<junction x="0" y="-198.12"/>
-<label x="-5.08" y="-198.12" size="1.778" layer="95" rot="R90"/>
-<pinref part="L2" gate="G$1" pin="2"/>
-<junction x="5.08" y="-198.12"/>
 </segment>
 <segment>
 <pinref part="R5" gate="G$1" pin="1"/>
@@ -19258,43 +18991,6 @@ CONN_06x2
 <wire x1="-12.7" y1="190.5" x2="-12.7" y2="182.88" width="0.1524" layer="91"/>
 <pinref part="SPDIF_OUT" gate="G$1" pin="RING"/>
 <wire x1="-12.7" y1="182.88" x2="-17.78" y2="182.88" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$23" class="0">
-<segment>
-<pinref part="L2" gate="G$1" pin="1"/>
-<pinref part="D4" gate="G$1" pin="A"/>
-<pinref part="U5" gate="A" pin="SW"/>
-<wire x1="10.16" y1="-190.5" x2="10.16" y2="-213.36" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="-213.36" x2="5.08" y2="-213.36" width="0.1524" layer="91"/>
-<junction x="5.08" y="-213.36"/>
-</segment>
-</net>
-<net name="N$24" class="0">
-<segment>
-<pinref part="R12" gate="R" pin="2"/>
-<pinref part="D4" gate="G$1" pin="K"/>
-<wire x1="6.35" y1="-232.41" x2="3.81" y2="-231.14" width="0.1524" layer="91"/>
-<wire x1="3.81" y1="-231.14" x2="5.08" y2="-223.52" width="0.1524" layer="91"/>
-<pinref part="C25" gate="C" pin="1"/>
-<wire x1="7.62" y1="-223.52" x2="5.08" y2="-231.14" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="-231.14" x2="6.35" y2="-231.14" width="0.1524" layer="91"/>
-<wire x1="6.35" y1="-231.14" x2="6.35" y2="-232.41" width="0.1524" layer="91"/>
-<junction x="6.35" y="-232.41"/>
-</segment>
-</net>
-<net name="N$25" class="0">
-<segment>
-<pinref part="R12" gate="R" pin="1"/>
-<pinref part="R13" gate="R" pin="2"/>
-<wire x1="13.97" y1="-232.41" x2="13.97" y2="-190.5" width="0.1524" layer="91"/>
-<junction x="13.97" y="-232.41"/>
-<pinref part="U5" gate="A" pin="FB"/>
-<wire x1="13.97" y1="-190.5" x2="2.54" y2="-190.5" width="0.1524" layer="91"/>
-<pinref part="C25" gate="C" pin="2"/>
-<wire x1="15.24" y1="-223.52" x2="13.97" y2="-226.06" width="0.1524" layer="91"/>
-<wire x1="15.24" y1="-226.06" x2="13.97" y2="-226.06" width="0.1524" layer="91"/>
-<wire x1="13.97" y1="-226.06" x2="13.97" y2="-232.41" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$21" class="0">
