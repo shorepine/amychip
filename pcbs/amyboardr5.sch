@@ -15679,6 +15679,91 @@ CONN_06x2
 </deviceset>
 </devicesets>
 </library>
+<library name="inductors" urn="urn:adsk.eagle:library:243">
+<description>&lt;b&gt;Inductors and Filters&lt;/b&gt;&lt;p&gt;
+Based on the previous library ind-a.lbr&lt;p&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="0402" urn="urn:adsk.eagle:footprint:15049/1" library_version="4">
+<description>&lt;b&gt;EMIFIL (R) Chip Ferrite Bead for GHz Noise&lt;/b&gt;&lt;p&gt;
+Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
+<wire x1="-0.245" y1="0.224" x2="0.245" y2="0.224" width="0.1524" layer="51"/>
+<wire x1="0.245" y1="-0.224" x2="-0.245" y2="-0.224" width="0.1524" layer="51"/>
+<wire x1="-1.473" y1="0.483" x2="1.473" y2="0.483" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="0.483" x2="1.473" y2="-0.483" width="0.0508" layer="39"/>
+<wire x1="1.473" y1="-0.483" x2="-1.473" y2="-0.483" width="0.0508" layer="39"/>
+<wire x1="-1.473" y1="-0.483" x2="-1.473" y2="0.483" width="0.0508" layer="39"/>
+<smd name="1" x="-0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
+<smd name="2" x="0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
+<text x="-0.635" y="0.635" size="1.27" layer="25">&gt;NAME</text>
+<text x="-0.635" y="-1.905" size="1.27" layer="27">&gt;VALUE</text>
+<rectangle x1="-0.554" y1="-0.3048" x2="-0.254" y2="0.2951" layer="51"/>
+<rectangle x1="0.2588" y1="-0.3048" x2="0.5588" y2="0.2951" layer="51"/>
+<rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
+</package>
+</packages>
+<packages3d>
+<package3d name="0402" urn="urn:adsk.eagle:package:15132/1" type="box" library_version="4">
+<description>EMIFIL (R) Chip Ferrite Bead for GHz Noise
+Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
+<packageinstances>
+<packageinstance name="0402"/>
+</packageinstances>
+</package3d>
+</packages3d>
+<symbols>
+<symbol name="L" urn="urn:adsk.eagle:symbol:15039/1" library_version="4">
+<text x="-3.81" y="1.3716" size="1.778" layer="95">&gt;NAME</text>
+<text x="-3.81" y="-2.921" size="1.778" layer="96">&gt;VALUE</text>
+<rectangle x1="-2.54" y1="-0.889" x2="2.54" y2="0.889" layer="94"/>
+<pin name="2" x="5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1" rot="R180"/>
+<pin name="1" x="-5.08" y="0" visible="off" length="short" direction="pas" swaplevel="1"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="BLM15H" urn="urn:adsk.eagle:component:15207/2" prefix="L" library_version="4">
+<description>&lt;b&gt;EMIFIL (R) Chip Ferrite Bead for GHz Noise&lt;/b&gt;&lt;p&gt;
+Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
+<gates>
+<gate name="G$1" symbol="L" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="0402">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:15132/1"/>
+</package3dinstances>
+<technologies>
+<technology name="B121SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="B221SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="D102SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="D182SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="D601SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="G102SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+<technology name="G601SN1">
+<attribute name="POPULARITY" value="0" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -15835,7 +15920,6 @@ CONN_06x2
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="R14" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="100K"/>
-<part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="R15" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="NC"/>
 <part name="R16" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="NC"/>
 <part name="R17" library="A9G" deviceset="DISCRETE_R*" device="-0603" value="0R"/>
@@ -15882,6 +15966,8 @@ CONN_06x2
 <part name="CV_IN1" library="PJ3410_sockets" deviceset="NV-PJ3410_STEREO" device=""/>
 <part name="R6" library="adafruit" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="R8" library="adafruit" deviceset="R-US_" device="R0805" value="15K"/>
+<part name="L1" library="inductors" library_urn="urn:adsk.eagle:library:243" deviceset="BLM15H" device="" package3d_urn="urn:adsk.eagle:package:15132/1" technology="B121SN1"/>
+<part name="L2" library="inductors" library_urn="urn:adsk.eagle:library:243" deviceset="BLM15H" device="" package3d_urn="urn:adsk.eagle:package:15132/1" technology="B121SN1"/>
 </parts>
 <sheets>
 <sheet>
@@ -16397,13 +16483,13 @@ CONN_06x2
 <attribute name="NAME" x="242.57" y="-3.3274" size="1.778" layer="95"/>
 <attribute name="VALUE" x="242.824" y="-8.4074" size="1.778" layer="96"/>
 </instance>
-<instance part="C27" gate="C" x="252.73" y="-11.43" smashed="yes" rot="R270">
-<attribute name="NAME" x="249.174" y="-10.414" size="1.27" layer="95" ratio="10"/>
-<attribute name="VALUE" x="246.888" y="-13.716" size="1.27" layer="96" ratio="10"/>
+<instance part="C27" gate="C" x="283.21" y="-11.43" smashed="yes" rot="R270">
+<attribute name="NAME" x="279.654" y="-10.414" size="1.27" layer="95" ratio="10"/>
+<attribute name="VALUE" x="279.908" y="-13.716" size="1.27" layer="96" ratio="10"/>
 </instance>
-<instance part="C28" gate="C" x="289.56" y="-11.43" smashed="yes" rot="R270">
-<attribute name="NAME" x="286.004" y="-10.414" size="1.27" layer="95" ratio="10"/>
-<attribute name="VALUE" x="283.718" y="-13.716" size="1.27" layer="96" ratio="10"/>
+<instance part="C28" gate="C" x="292.1" y="-11.43" smashed="yes" rot="R270">
+<attribute name="NAME" x="288.544" y="-10.414" size="1.27" layer="95" ratio="10"/>
+<attribute name="VALUE" x="288.798" y="-13.716" size="1.27" layer="96" ratio="10"/>
 </instance>
 <instance part="C29" gate="C" x="275.59" y="-13.97" smashed="yes" rot="R270">
 <attribute name="NAME" x="276.098" y="-12.954" size="1.27" layer="95" ratio="10"/>
@@ -16422,15 +16508,12 @@ CONN_06x2
 <instance part="GND4" gate="1" x="271.78" y="-41.91" smashed="yes">
 <attribute name="VALUE" x="269.24" y="-44.45" size="1.778" layer="96"/>
 </instance>
-<instance part="GND5" gate="1" x="289.56" y="-21.59" smashed="yes">
-<attribute name="VALUE" x="287.02" y="-24.13" size="1.778" layer="96"/>
+<instance part="GND5" gate="1" x="292.1" y="-21.59" smashed="yes">
+<attribute name="VALUE" x="289.56" y="-24.13" size="1.778" layer="96"/>
 </instance>
 <instance part="R14" gate="R" x="220.98" y="-13.97" smashed="yes" rot="R90">
 <attribute name="NAME" x="219.71" y="-14.732" size="1.27" layer="95" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="219.964" y="-12.954" size="1.27" layer="96" ratio="10" rot="R180"/>
-</instance>
-<instance part="GND6" gate="1" x="252.73" y="-19.05" smashed="yes">
-<attribute name="VALUE" x="248.92" y="-21.59" size="1.778" layer="96"/>
 </instance>
 <instance part="R15" gate="R" x="250.19" y="-39.37" smashed="yes" rot="R90">
 <attribute name="NAME" x="248.92" y="-40.132" size="1.27" layer="95" ratio="10" rot="R180"/>
@@ -16468,9 +16551,9 @@ CONN_06x2
 <attribute name="NAME" x="264.414" y="14.986" size="1.27" layer="95" ratio="10"/>
 <attribute name="VALUE" x="262.128" y="11.684" size="1.27" layer="96" ratio="10"/>
 </instance>
-<instance part="C20" gate="C" x="274.32" y="13.97" smashed="yes" rot="R270">
-<attribute name="NAME" x="270.764" y="14.986" size="1.27" layer="95" ratio="10"/>
-<attribute name="VALUE" x="268.478" y="11.684" size="1.27" layer="96" ratio="10"/>
+<instance part="C20" gate="C" x="276.86" y="13.97" smashed="yes" rot="R270">
+<attribute name="NAME" x="273.304" y="14.986" size="1.27" layer="95" ratio="10"/>
+<attribute name="VALUE" x="271.018" y="11.684" size="1.27" layer="96" ratio="10"/>
 </instance>
 <instance part="C21" gate="C" x="-137.16" y="-46.99" smashed="yes" rot="R270">
 <attribute name="NAME" x="-140.716" y="-45.974" size="1.27" layer="95" ratio="10"/>
@@ -16608,6 +16691,14 @@ CONN_06x2
 <instance part="R8" gate="G$1" x="-96.52" y="-30.48" smashed="yes" rot="R270">
 <attribute name="NAME" x="-95.504" y="-28.194" size="1.27" layer="95" font="vector" rot="R270"/>
 <attribute name="VALUE" x="-99.06" y="-28.702" size="1.016" layer="96" font="vector" ratio="15" rot="R270"/>
+</instance>
+<instance part="L1" gate="G$1" x="287.02" y="-5.08" smashed="yes">
+<attribute name="NAME" x="283.21" y="-3.7084" size="1.778" layer="95"/>
+<attribute name="VALUE" x="283.21" y="-8.001" size="1.778" layer="96"/>
+</instance>
+<instance part="L2" gate="G$1" x="271.78" y="10.16" smashed="yes">
+<attribute name="NAME" x="267.97" y="11.5316" size="1.778" layer="95"/>
+<attribute name="VALUE" x="267.97" y="7.239" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -16996,13 +17087,12 @@ CONN_06x2
 </segment>
 <segment>
 <pinref part="C28" gate="C" pin="2"/>
-<wire x1="289.56" y1="-19.05" x2="289.56" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="292.1" y1="-19.05" x2="292.1" y2="-15.24" width="0.1524" layer="91"/>
 <pinref part="GND5" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="GND6" gate="1" pin="GND"/>
 <pinref part="C27" gate="C" pin="2"/>
-<wire x1="252.73" y1="-16.51" x2="252.73" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="283.21" y1="-15.24" x2="283.21" y2="-19.05" width="0.1524" layer="91"/>
+<wire x1="283.21" y1="-19.05" x2="292.1" y2="-19.05" width="0.1524" layer="91"/>
+<junction x="292.1" y="-19.05"/>
 </segment>
 <segment>
 <pinref part="D9" gate="G$1" pin="C"/>
@@ -17011,7 +17101,7 @@ CONN_06x2
 </segment>
 <segment>
 <pinref part="C31" gate="C" pin="1"/>
-<wire x1="267.97" y1="17.78" x2="274.32" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="267.97" y1="17.78" x2="276.86" y2="17.78" width="0.1524" layer="91"/>
 <label x="271.78" y="17.78" size="1.778" layer="95"/>
 <pinref part="C20" gate="C" pin="1"/>
 </segment>
@@ -18406,15 +18496,11 @@ CONN_06x2
 </net>
 <net name="-12V" class="0">
 <segment>
-<pinref part="D10" gate="G$1" pin="A"/>
-<pinref part="C31" gate="C" pin="2"/>
-<wire x1="259.08" y1="10.16" x2="267.97" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="267.97" y1="10.16" x2="274.32" y2="10.16" width="0.1524" layer="91"/>
-<junction x="267.97" y="10.16"/>
 <label x="284.48" y="10.16" size="1.778" layer="95"/>
 <pinref part="C20" gate="C" pin="2"/>
-<wire x1="274.32" y1="10.16" x2="289.56" y2="10.16" width="0.1524" layer="91"/>
-<junction x="274.32" y="10.16"/>
+<wire x1="276.86" y1="10.16" x2="287.02" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="L2" gate="G$1" pin="2"/>
+<junction x="276.86" y="10.16"/>
 </segment>
 <segment>
 <pinref part="U4" gate="A" pin="VCC-"/>
@@ -18554,27 +18640,8 @@ CONN_06x2
 </net>
 <net name="12V" class="0">
 <segment>
-<pinref part="C28" gate="C" pin="1"/>
-<wire x1="289.56" y1="-5.08" x2="289.56" y2="-7.62" width="0.1524" layer="91"/>
-<pinref part="C27" gate="C" pin="1"/>
-<wire x1="252.73" y1="-7.62" x2="252.73" y2="-5.08" width="0.1524" layer="91"/>
-<pinref part="D8" gate="G$1" pin="C"/>
-<wire x1="252.73" y1="-5.08" x2="246.38" y2="-5.08" width="0.1524" layer="91"/>
-<wire x1="252.73" y1="-5.08" x2="266.7" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="252.73" y="-5.08"/>
-<wire x1="266.7" y1="-5.08" x2="271.78" y2="-5.08" width="0.1524" layer="91"/>
-<wire x1="271.78" y1="-5.08" x2="271.78" y2="-17.78" width="0.1524" layer="91"/>
-<wire x1="271.78" y1="-5.08" x2="275.59" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="271.78" y="-5.08"/>
-<wire x1="275.59" y1="-5.08" x2="289.56" y2="-5.08" width="0.1524" layer="91"/>
-<pinref part="C29" gate="C" pin="1"/>
-<wire x1="275.59" y1="-10.16" x2="275.59" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="275.59" y="-5.08"/>
-<label x="280.416" y="-3.81" size="1.778" layer="95"/>
 <wire x1="266.7" y1="-8.89" x2="266.7" y2="-5.08" width="0.1524" layer="91"/>
-<junction x="266.7" y="-5.08"/>
 <pinref part="R17" gate="R" pin="2"/>
-<pinref part="R18" gate="R" pin="2"/>
 </segment>
 <segment>
 <wire x1="165.1" y1="-12.7" x2="165.1" y2="-11.43" width="0.1524" layer="91"/>
@@ -18587,6 +18654,14 @@ CONN_06x2
 <wire x1="168.91" y1="-13.97" x2="167.64" y2="-13.97" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="-13.97" x2="167.64" y2="-11.43" width="0.1524" layer="91"/>
 <junction x="167.64" y="-11.43"/>
+</segment>
+<segment>
+<pinref part="C28" gate="C" pin="1"/>
+<wire x1="292.1" y1="-5.08" x2="294.64" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="292.1" y1="-5.08" x2="292.1" y2="-7.62" width="0.1524" layer="91"/>
+<label x="293.116" y="-3.81" size="1.778" layer="95"/>
+<pinref part="L1" gate="G$1" pin="2"/>
+<junction x="292.1" y="-5.08"/>
 </segment>
 </net>
 <net name="N$29" class="0">
@@ -18901,6 +18976,39 @@ CONN_06x2
 <pinref part="CV_IN1" gate="G$1" pin="TIP"/>
 <pinref part="R5" gate="G$1" pin="1"/>
 <wire x1="-66.04" y1="-22.86" x2="-71.12" y2="-22.86" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$16" class="0">
+<segment>
+<pinref part="C31" gate="C" pin="2"/>
+<pinref part="D10" gate="G$1" pin="A"/>
+<wire x1="259.08" y1="10.16" x2="266.7" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="L2" gate="G$1" pin="1"/>
+<wire x1="266.7" y1="10.16" x2="267.97" y2="10.16" width="0.1524" layer="91"/>
+<junction x="266.7" y="10.16"/>
+</segment>
+</net>
+<net name="N$24" class="0">
+<segment>
+<pinref part="L1" gate="G$1" pin="1"/>
+<wire x1="281.94" y1="-5.08" x2="283.21" y2="-5.08" width="0.1524" layer="91"/>
+<pinref part="C27" gate="C" pin="1"/>
+<wire x1="283.21" y1="-7.62" x2="283.21" y2="-5.08" width="0.1524" layer="91"/>
+<pinref part="D8" gate="G$1" pin="C"/>
+<wire x1="246.38" y1="-5.08" x2="281.94" y2="-5.08" width="0.1524" layer="91"/>
+<junction x="281.94" y="-5.08"/>
+</segment>
+</net>
+<net name="N$25" class="0">
+<segment>
+<pinref part="C29" gate="C" pin="1"/>
+<wire x1="275.59" y1="-10.16" x2="275.59" y2="-5.08" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$30" class="0">
+<segment>
+<wire x1="271.78" y1="-5.08" x2="271.78" y2="-17.78" width="0.1524" layer="91"/>
+<pinref part="R18" gate="R" pin="2"/>
 </segment>
 </net>
 </nets>
