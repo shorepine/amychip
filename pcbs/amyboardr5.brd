@@ -2519,39 +2519,6 @@ CONN_06x2
 </package>
 </packages>
 </library>
-<library name="inductors" urn="urn:adsk.eagle:library:243">
-<description>&lt;b&gt;Inductors and Filters&lt;/b&gt;&lt;p&gt;
-Based on the previous library ind-a.lbr&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="0402" urn="urn:adsk.eagle:footprint:15049/1" library_version="4">
-<description>&lt;b&gt;EMIFIL (R) Chip Ferrite Bead for GHz Noise&lt;/b&gt;&lt;p&gt;
-Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
-<wire x1="-0.245" y1="0.224" x2="0.245" y2="0.224" width="0.1524" layer="51"/>
-<wire x1="0.245" y1="-0.224" x2="-0.245" y2="-0.224" width="0.1524" layer="51"/>
-<wire x1="-1.473" y1="0.483" x2="1.473" y2="0.483" width="0.0508" layer="39"/>
-<wire x1="1.473" y1="0.483" x2="1.473" y2="-0.483" width="0.0508" layer="39"/>
-<wire x1="1.473" y1="-0.483" x2="-1.473" y2="-0.483" width="0.0508" layer="39"/>
-<wire x1="-1.473" y1="-0.483" x2="-1.473" y2="0.483" width="0.0508" layer="39"/>
-<smd name="1" x="-0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
-<smd name="2" x="0.65" y="0" dx="0.7" dy="0.9" layer="1"/>
-<text x="-0.635" y="0.635" size="1.27" layer="25">&gt;NAME</text>
-<text x="-0.635" y="-1.905" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-0.554" y1="-0.3048" x2="-0.254" y2="0.2951" layer="51"/>
-<rectangle x1="0.2588" y1="-0.3048" x2="0.5588" y2="0.2951" layer="51"/>
-<rectangle x1="-0.1999" y1="-0.4001" x2="0.1999" y2="0.4001" layer="35"/>
-</package>
-</packages>
-<packages3d>
-<package3d name="0402" urn="urn:adsk.eagle:package:15132/1" type="box" library_version="4">
-<description>EMIFIL (R) Chip Ferrite Bead for GHz Noise
-Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
-<packageinstances>
-<packageinstance name="0402"/>
-</packageinstances>
-</package3d>
-</packages3d>
-</library>
 </libraries>
 <attributes>
 </attributes>
@@ -3399,15 +3366,13 @@ design rules under a new name.</description>
 <attribute name="NAME" x="33.528" y="46.99" size="1.27" layer="25" rot="R90"/>
 <attribute name="VALUE" x="36.83" y="46.99" size="1.27" layer="27" rot="R90"/>
 </element>
-<element name="L1" library="inductors" library_urn="urn:adsk.eagle:library:243" package="0402" package3d_urn="urn:adsk.eagle:package:15132/1" value="BLM15HB121SN1" x="-284.226" y="-1072.388" smashed="yes">
-<attribute name="NAME" x="-284.861" y="-1071.753" size="1.27" layer="25"/>
-<attribute name="POPULARITY" value="0" x="-284.226" y="-1072.388" size="1.778" layer="27" display="off"/>
-<attribute name="VALUE" x="-284.861" y="-1074.293" size="1.27" layer="27"/>
+<element name="FB1" library="rcl" package="R0805" value="100Mhz@120R" x="-283.718" y="-1083.056" smashed="yes">
+<attribute name="NAME" x="-284.353" y="-1081.786" size="1.27" layer="25"/>
+<attribute name="VALUE" x="-284.353" y="-1085.596" size="1.27" layer="27"/>
 </element>
-<element name="L2" library="inductors" library_urn="urn:adsk.eagle:library:243" package="0402" package3d_urn="urn:adsk.eagle:package:15132/1" value="BLM15HB121SN1" x="-284.226" y="-1077.468" smashed="yes">
-<attribute name="NAME" x="-284.861" y="-1076.833" size="1.27" layer="25"/>
-<attribute name="POPULARITY" value="0" x="-284.226" y="-1077.468" size="1.778" layer="27" display="off"/>
-<attribute name="VALUE" x="-284.861" y="-1079.373" size="1.27" layer="27"/>
+<element name="FB2" library="rcl" package="R0805" value="100Mhz@120R" x="-283.718" y="-1089.406" smashed="yes">
+<attribute name="NAME" x="-284.353" y="-1088.136" size="1.27" layer="25"/>
+<attribute name="VALUE" x="-284.353" y="-1091.946" size="1.27" layer="27"/>
 </element>
 </elements>
 <signals>
@@ -4250,8 +4215,8 @@ design rules under a new name.</description>
 <signal name="-12V">
 <contactref element="C20" pad="2"/>
 <contactref element="U4" pad="11"/>
-<contactref element="L2" pad="2"/>
-<wire x1="57.593" y1="15.24" x2="-283.576" y2="-1077.468" width="0" layer="19" extent="1-1"/>
+<contactref element="FB1" pad="2"/>
+<wire x1="57.593" y1="15.24" x2="-282.768" y2="-1083.056" width="0" layer="19" extent="1-1"/>
 <wire x1="6.858" y1="33.528" x2="57.593" y2="15.24" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="+12V">
@@ -4331,8 +4296,8 @@ design rules under a new name.</description>
 <signal name="12V">
 <contactref element="R17" pad="2"/>
 <contactref element="C28" pad="1"/>
-<contactref element="L1" pad="2"/>
-<wire x1="35.56" y1="34.036" x2="-283.576" y2="-1072.388" width="0" layer="19" extent="1-1"/>
+<contactref element="FB2" pad="2"/>
+<wire x1="35.56" y1="34.036" x2="-282.768" y2="-1089.406" width="0" layer="19" extent="1-1"/>
 <wire x1="29.972" y1="38.1" x2="35.56" y2="34.036" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$29">
@@ -4501,20 +4466,20 @@ design rules under a new name.</description>
 <signal name="N$16">
 <contactref element="D10" pad="A"/>
 <contactref element="C31" pad="2"/>
-<contactref element="L2" pad="1"/>
-<wire x1="17.519" y1="34.29" x2="-284.876" y2="-1077.468" width="0" layer="19" extent="1-1"/>
+<contactref element="FB1" pad="1"/>
+<wire x1="17.519" y1="34.29" x2="-284.668" y2="-1083.056" width="0" layer="19" extent="1-1"/>
 <wire x1="10.16" y1="33.528" x2="17.519" y2="34.29" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="12V_UNFILTERED">
 <contactref element="C27" pad="1"/>
-<contactref element="L1" pad="1"/>
 <contactref element="D8" pad="C"/>
 <contactref element="U3" pad="1"/>
 <contactref element="C32" pad="1"/>
 <contactref element="U3" pad="3"/>
 <contactref element="U$7" pad="5"/>
 <contactref element="C26" pad="1"/>
-<wire x1="51.054" y1="24.07" x2="-284.876" y2="-1072.388" width="0" layer="19" extent="1-1"/>
+<contactref element="FB2" pad="1"/>
+<wire x1="51.054" y1="24.07" x2="-284.668" y2="-1089.406" width="0" layer="19" extent="1-1"/>
 <wire x1="38.034" y1="21.0519" x2="51.054" y2="24.07" width="0" layer="19" extent="1-1"/>
 <wire x1="38.107" y1="20.574" x2="38.034" y2="21.0519" width="0" layer="19" extent="1-1"/>
 <wire x1="36.134" y1="21.0519" x2="38.034" y2="21.0519" width="0" layer="19" extent="1-1"/>
