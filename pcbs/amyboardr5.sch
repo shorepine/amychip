@@ -15930,7 +15930,6 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <part name="D10" library="diode" deviceset="DIODE-" device="DO-214AC" value="SS54"/>
 <part name="C31" library="Discrete-new" deviceset="CAP" device="-0603" value="22uF"/>
 <part name="C20" library="Discrete-new" deviceset="CAP" device="-0603" value="100nF"/>
-<part name="C21" library="Discrete-new" deviceset="CAP" device="-0603" value="20pF"/>
 <part name="R20" library="adafruit" deviceset="R-US_" device="R0805" value="10K"/>
 <part name="R21" library="adafruit" deviceset="R-US_" device="R0805" value="15K"/>
 <part name="C22" library="microbuilder" deviceset="CAP_ELECTROLYTIC" device="PANASONIC_C" value="1uF"/>
@@ -16004,6 +16003,8 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <text x="246.38" y="-64.77" size="5.08" layer="97">USB</text>
 <rectangle x1="132.08" y1="-38.1" x2="152.4" y2="25.4" layer="200"/>
 <text x="157.226" y="184.658" size="5.08" layer="97">PCM5101 DAC</text>
+<text x="299.72" y="5.08" size="1.778" layer="91">Place C20 and C28
+close to U4 (TL074)</text>
 </plain>
 <instances>
 <instance part="U1" gate="G$1" x="50.8" y="63.5" smashed="yes">
@@ -16554,10 +16555,6 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <instance part="C20" gate="C" x="276.86" y="13.97" smashed="yes" rot="R270">
 <attribute name="NAME" x="273.304" y="14.986" size="1.27" layer="95" ratio="10"/>
 <attribute name="VALUE" x="271.018" y="11.684" size="1.27" layer="96" ratio="10"/>
-</instance>
-<instance part="C21" gate="C" x="-137.16" y="-46.99" smashed="yes" rot="R270">
-<attribute name="NAME" x="-140.716" y="-45.974" size="1.27" layer="95" ratio="10"/>
-<attribute name="VALUE" x="-143.002" y="-49.276" size="1.27" layer="96" ratio="10"/>
 </instance>
 <instance part="R20" gate="G$1" x="-78.74" y="-53.34" smashed="yes" rot="R270">
 <attribute name="NAME" x="-77.724" y="-51.054" size="1.27" layer="95" font="vector" rot="R270"/>
@@ -18507,27 +18504,14 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <wire x1="-142.24" y1="-48.26" x2="-137.16" y2="-48.26" width="0.1524" layer="91"/>
 <wire x1="-137.16" y1="-48.26" x2="-137.16" y2="-50.8" width="0.1524" layer="91"/>
 <label x="-137.16" y="-50.8" size="1.778" layer="95"/>
-<pinref part="C21" gate="C" pin="2"/>
 </segment>
 </net>
 <net name="+12V" class="0">
 <segment>
 <pinref part="U4" gate="A" pin="VCC+"/>
 <wire x1="-142.24" y1="-45.72" x2="-137.16" y2="-45.72" width="0.1524" layer="91"/>
-<wire x1="-137.16" y1="-45.72" x2="-137.16" y2="-43.18" width="0.1524" layer="91"/>
 <label x="-137.16" y="-40.64" size="1.778" layer="95"/>
-<pinref part="C21" gate="C" pin="1"/>
-<wire x1="-137.16" y1="-43.18" x2="-137.16" y2="-40.64" width="0.1524" layer="91"/>
-<junction x="-137.16" y="-43.18"/>
-</segment>
-<segment>
-<pinref part="U$7" gate="G$1" pin="VCC"/>
-<wire x1="-181.61" y1="-15.24" x2="-187.96" y2="-15.24" width="0.1524" layer="91"/>
-<wire x1="-187.96" y1="-15.24" x2="-198.12" y2="-15.24" width="0.1524" layer="91"/>
-<wire x1="-198.12" y1="-15.24" x2="-198.12" y2="-10.16" width="0.1524" layer="91"/>
-<label x="-198.12" y="-10.16" size="1.778" layer="95"/>
-<pinref part="C26" gate="G$1" pin="1"/>
-<junction x="-187.96" y="-15.24"/>
+<wire x1="-137.16" y1="-45.72" x2="-137.16" y2="-40.64" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$75" class="0">
@@ -18642,18 +18626,6 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <segment>
 <wire x1="266.7" y1="-8.89" x2="266.7" y2="-5.08" width="0.1524" layer="91"/>
 <pinref part="R17" gate="R" pin="2"/>
-</segment>
-<segment>
-<wire x1="165.1" y1="-12.7" x2="165.1" y2="-11.43" width="0.1524" layer="91"/>
-<pinref part="C32" gate="C" pin="1"/>
-<label x="161.544" y="-10.922" size="1.778" layer="95"/>
-<pinref part="U3" gate="G$1" pin="VIN"/>
-<wire x1="168.91" y1="-11.43" x2="167.64" y2="-11.43" width="0.1524" layer="91"/>
-<pinref part="U3" gate="G$1" pin="EN"/>
-<wire x1="167.64" y1="-11.43" x2="165.1" y2="-11.43" width="0.1524" layer="91"/>
-<wire x1="168.91" y1="-13.97" x2="167.64" y2="-13.97" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="-13.97" x2="167.64" y2="-11.43" width="0.1524" layer="91"/>
-<junction x="167.64" y="-11.43"/>
 </segment>
 <segment>
 <pinref part="C28" gate="C" pin="1"/>
@@ -18988,7 +18960,7 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <junction x="266.7" y="10.16"/>
 </segment>
 </net>
-<net name="N$24" class="0">
+<net name="12V_UNFILTERED" class="0">
 <segment>
 <pinref part="L1" gate="G$1" pin="1"/>
 <wire x1="281.94" y1="-5.08" x2="283.21" y2="-5.08" width="0.1524" layer="91"/>
@@ -18997,6 +18969,29 @@ Source: http://www.murata.com/ Ferrite Bead BLM15H.pdf</description>
 <pinref part="D8" gate="G$1" pin="C"/>
 <wire x1="246.38" y1="-5.08" x2="281.94" y2="-5.08" width="0.1524" layer="91"/>
 <junction x="281.94" y="-5.08"/>
+<label x="256.54" y="-5.08" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="U3" gate="G$1" pin="VIN"/>
+<pinref part="C32" gate="C" pin="1"/>
+<wire x1="168.91" y1="-11.43" x2="165.1" y2="-11.43" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="-11.43" x2="165.1" y2="-12.7" width="0.1524" layer="91"/>
+<pinref part="U3" gate="G$1" pin="EN"/>
+<wire x1="168.91" y1="-11.43" x2="168.91" y2="-13.97" width="0.1524" layer="91"/>
+<junction x="168.91" y="-11.43"/>
+<wire x1="165.1" y1="-10.16" x2="165.1" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="-10.16" x2="165.1" y2="-12.7" width="0.1524" layer="91"/>
+<junction x="165.1" y="-12.7"/>
+<label x="165.1" y="-5.08" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="U$7" gate="G$1" pin="VCC"/>
+<pinref part="C26" gate="G$1" pin="1"/>
+<wire x1="-181.61" y1="-15.24" x2="-187.96" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="-187.96" y1="-15.24" x2="-193.04" y2="-15.24" width="0.1524" layer="91"/>
+<junction x="-187.96" y="-15.24"/>
+<wire x1="-193.04" y1="-15.24" x2="-193.04" y2="-10.16" width="0.1524" layer="91"/>
+<label x="-213.36" y="-12.7" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$25" class="0">
