@@ -41,8 +41,8 @@ i2s_chan_handle_t rx_handle;
 #define AMYOUT 6 // data going to the codec, eg DAC data
 #define I2C_SLAVE_SCL 5
 #define I2C_SLAVE_SDA 4 
-#define I2C_MASTER_SCL 17
-#define I2C_MASTER_SDA 18
+#define I2C_MASTER_SCL 18
+#define I2C_MASTER_SDA 17
 #define AMYIN 9 // data coming from the codec, eg ADC  data
 #endif
 
@@ -93,7 +93,7 @@ TaskHandle_t alles_fill_buffer_handle;
 
 i2c_master_bus_handle_t tool_bus_handle;
 i2c_master_dev_handle_t pcm9211_handle;
-#define I2C_TOOL_TIMEOUT_VALUE_MS (50)
+#define I2C_TOOL_TIMEOUT_VALUE_MS (500)
 
 esp_err_t i2c_master_write(uint8_t device_addr, uint8_t *data_wr, size_t size_wr) {
     esp_err_t ret = i2c_master_transmit(pcm9211_handle, data_wr, size_wr, I2C_TOOL_TIMEOUT_VALUE_MS);
@@ -122,29 +122,32 @@ void pcm9211_writeRegister(uint8_t reg, uint16_t value) {
       fprintf(stderr, "bad write to pcm9211\n");
 }
 
+uint8_t pcm9211_registers[10][2] = {
+    { 0x40, 0x33 }, // Power down ADC, power down DIR, power down DIT, power down OSC
+    { 0x40, 0xc0 }, // Normal operation for all
+    { 0x34, 0x00 }, // Initialize DIR - both biphase amps on, input from RXIN0
+    { 0x26, 0x01 }, // Main Out is DIR/ADC if no DIR sync (these match power-on default, repeated for clarity).
+    { 0x6B, 0x00 }, // Main output pins are DIR/ADC AUTO
+    { 0x30, 0x04 }, // PLL sends 512fs as SCK
+    { 0x31, 0x0A }, // XTI SCK as 512fs too
+    { 0x60, 0x44 }, // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
+    { 0x78, 0x3d }, // MPO0 = 0b1101 = TXOUT, MPO1 = 0b0011 = VOUT
+    { 0x6F, 0x40 }  // MPIO_A = CLKST etc / MPIO_B = AUXIN2 / MPIO_C = AUXIN1
+};
+
 esp_err_t setup_pcm9211(void) {
-    // #System RST Control
-    fprintf(stderr, "setting up pcm9211\n");
-    pcm9211_writeRegister(0x40, 0x33);  // Power down ADC, power down DIR, power down DIT, power down OSC
-    pcm9211_writeRegister(0x40, 0xc0);  // Normal operation for all
-
-    // Initialize DIR - both biphase amps on, input from RXIN0
-    pcm9211_writeRegister(0x34, 0x00);
-    // Main Out is DIR/ADC if no DIR sync (these match power-on default, repeated for clarity).
-    pcm9211_writeRegister(0x26, 0x01);  // AUTO selects based on PLL lock error.
-    pcm9211_writeRegister(0x6B, 0x00);  // Main output pins are DIR/ADC AUTO
-
-    // PLL sends 512fs as SCK
-    pcm9211_writeRegister(0x30, 0x04); 
-    // XTI SCK as 512fs too
-    pcm9211_writeRegister(0x31, 0x0A); 
-    
-    // Initialize PCM9211 DIT to send SPDIF from AUXIN1 through MPO0 (pin15).  MPO1 (pin16) is VOUT (Valid)
-    pcm9211_writeRegister(0x60, 0x44);  // 0x44 = AUXIN1
-    pcm9211_writeRegister(0x78, 0x3d);  // MPO0 = 0b1101 = TXOUT, MPO1 = 0b0011 = VOUT
-
-    // Initialize MPIO_C as I2S input to AUXIN1
-    pcm9211_writeRegister(0x6F, 0x40);  // MPIO_A = CLKST etc / MPIO_B = AUXIN2 / MPIO_C = AUXIN1
+    for(uint8_t i=0;i<10; i++) {
+        delay_ms(100);
+        fprintf(stderr, "[pcm9211] setting register 0x%02x to 0x%02x: ", pcm9211_registers[i][0], pcm9211_registers[i][1]);
+        pcm9211_writeRegister(pcm9211_registers[i][0], pcm9211_registers[i][1]);
+        delay_ms(100);
+        uint8_t read_back = pcm9211_readRegister(pcm9211_registers[i][0]);
+        if(read_back == pcm9211_registers[i][1]) {
+            fprintf(stderr, "success\n");
+        } else {
+            fprintf(stderr, "failed?: read back is 0x%02x\n", read_back);
+        }
+    }
     return ESP_OK;
 }
 
@@ -362,22 +365,25 @@ void app_main(void)
     check_init(&i2c_master_init, "i2c_master");
     check_init(&i2c_slave_init, "i2c_slave");
     check_init(&setup_pcm9211, "pcm9211");
+
+    delay_ms(1000);
     
 
     // make this 1 if you want to actually turn on i2s... it is currently hanging as it can't find MCLK on the pin....
-    check_init(&setup_i2s, "i2s");
-    esp_amy_init();
-    amy_reset_oscs();
+    if(0) {
+        check_init(&setup_i2s, "i2s");
+        esp_amy_init();
+        amy_reset_oscs();
 
-    struct event e = amy_default_event();
-    e.time = amy_sysclock();
-    e.freq_coefs[0] = 440;
-    e.wave = SINE;
-    e.osc = 0;
-    e.velocity = 1;
-    //amy_add_event(e);
-    example_voice_chord(amy_sysclock(), 0);
-
+        struct event e = amy_default_event();
+        e.time = amy_sysclock();
+        e.freq_coefs[0] = 440;
+        e.wave = SINE;
+        e.osc = 0;
+        e.velocity = 1;
+        amy_add_event(e);
+        //example_voice_chord(amy_sysclock(), 0);
+    }
     while(1) {
         delay_ms(1000);
             fprintf(stderr, "register 0x39 is 0x%02x\n", pcm9211_readRegister(0x39));
