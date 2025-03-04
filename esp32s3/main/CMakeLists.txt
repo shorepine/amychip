@@ -25,7 +25,7 @@ target_compile_options(${COMPONENT_TARGET} PUBLIC
     -Wno-uninitialized
     -DESP_PLATFORM
     -DAMYCHIP
-    -DAMYBOARD_DIY
+    -DAMYBOARD_R3
 )
 
 set_source_files_properties(../../amy/src/amy.c
