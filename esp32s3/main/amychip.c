@@ -44,6 +44,7 @@ i2s_chan_handle_t rx_handle;
 #define I2C_MASTER_SCL 18
 #define I2C_MASTER_SDA 17
 #define AMYIN 9 // data coming from the codec, eg ADC  data
+#define MPIO 7 // we don't know what this is, but that's the pin it's connected to 
 #endif
 
 #define I2S_SAMPLE_TYPE I2S_BITS_PER_SAMPLE_32BIT
@@ -370,7 +371,7 @@ void app_main(void)
     
 
     // make this 1 if you want to actually turn on i2s... it is currently hanging as it can't find MCLK on the pin....
-    if(0) {
+    if(1) {
         check_init(&setup_i2s, "i2s");
         esp_amy_init();
         amy_reset_oscs();
